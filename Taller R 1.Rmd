@@ -296,11 +296,25 @@ describe(d$hp) # la función "describe" viene en el paquete de psych; da datos a
 describeBy(d$mpg, d$am) # from the "psych" package
 ```
 
-Una forma más complicada pero útil de verificar estadísticas es la función `xtabs()`, es decir tabulación cruzada. El código pide una fórmula que contraste las variables. El código es un poco más complicado pero se puede interpretar como "el promedio de `mpg`, para cada grupo de `cyl` y `am`". Ya que `cyl` tiene tres grupos y `am` tiene dos, `xtabs()` devuelve una tabla de seis celdas return con los promedios de `mpg` para cada uno de estos grupos; así podríamos por ejemplo verificar como cambian las medias dadas ciertas categorías. Noten que hemos usado, sin `attach()` el nombre de las variables, ya que le dijimos a la función que se enfocara en las variables dentro del objeto definido en la opción `data = conjunto_de_datos` (aquí, *data* = d).
+Una forma más complicada pero útil de verificar estadísticas es la función `xtabs()`, es decir tabulación cruzada. El código pide una fórmula que contraste las variables. El código es un poco más complicado pero se puede interpretar como "la suma de `mpg`, para cada grupo de `cyl` y `am`". Ya que `cyl` tiene tres grupos y `am` tiene dos grupos, `xtabs()` devuelve una tabla de seis celdas con las sumas de `mpg` para cada uno de estos grupos; así podríamos por ejemplo verificar como cambian las medias dadas ciertas categorías. Noten que hemos usado, sin `attach()` el nombre de las variables, ya que le dijimos a la función que se enfocara en las variables dentro del objeto definido en la opción `data = conjunto_de_datos` (aquí, *data* = d).
 
 ```{r}
 xtabs(mpg ~ cyl + am, data = d)
 ```
+Si queríamos el promedio de millas por galón por categoría hacemos lo siguiente:
+```{r}
+# Sumamos mpg por categorías de cyl y am
+suma_mpg <- xtabs(mpg ~ cyl + am, data = d)
+
+# Sacamos la cantidad de observaciones por categorías de cyl y am obviando el lado izquierdo de la fórmula
+cantidad <- xtabs(~ cyl + am, data = d)
+
+# Media de mpg por categorías de cyl y am
+media_mpg <- suma_mpg / cantidad
+
+media_mpg
+```
+En este caso hemos obtenido la media de millas por galón según la cantidad de cilindros del vehículo, y si la transmisión era manual o automática.
 
 # Entendiendo y manipulando datos: Tidyverse
 
