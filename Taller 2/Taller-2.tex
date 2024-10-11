@@ -108,7 +108,7 @@
 
 \title{CACCS: Secuencia de taller de RStudio -- Parte 2}
 \author{Rashid C.J. Marcano Rivera}
-\date{4 de oct.ᵉ de 2024}
+\date{11 de oct.ᵉ de 2024}
 
 \begin{document}
 \maketitle
@@ -184,7 +184,8 @@ contexto adicional. Pero podríamos ver algo en este gráfico
 \begin{figure}
 \centering
 \includegraphics{Relación.png}
-\caption{Meta 1}
+\caption{Meta 1: datos de ingreso, que continuaremos al abundar en
+modelos inferenciales el sábado que viene.}
 \end{figure}
 
 Lo mismo podríamos hacer con los datos que trabajamos la semana pasada
@@ -252,7 +253,11 @@ visualizaciones ha aumentado en diversos espacios: académicos,
 gubernamentales, organizaciones sociales, prensa, e industrias varias.
 
 En R, una de las principales maneras con la que trabajaremos estos
-análisis visuales es de la mano de \texttt{ggplot2}, .
+análisis visuales es de la mano de \texttt{ggplot2}, así como con otros
+paquetes que ayudan a procesar esta información. Si bien existen otros
+métodos de graficar en R y otros programas, la preferencia de este
+taller es utilizar el sistema de procesamiento que ofrece
+\texttt{tidyverse}, con \texttt{ggplot2} incluido.
 
 Esta es una secuencia de tres semanas, y en esta lección continuamos con
 lo aprendido la semana anterior, donde terminamos con visualizaciones
@@ -280,22 +285,23 @@ sobre modelos lineales, jerárquicos y longitudinales.
 
 R ofrece varias opciones para graficar, siendo útiles las capacidades
 incluidas en su instalación básica. Además, existen paquetes como
-\texttt{grid} y \texttt{lattice}. Sin embargo, en este libro se ha
-optado por usar \texttt{ggplot2}, ya que permite a los principiantes
-crear gráficos complejos y estéticos mediante una sintaxis intuitiva y
-fácil de recordar, dividiendo los gráficos en componentes básicos.
+\texttt{grid} y \texttt{lattice}. Sin embargo, en este taller (y en los
+libros de referencia usados y descritos arriba) se ha optado por usar
+\texttt{ggplot2}, ya que permite a los principiantes crear gráficos
+complejos y estéticos mediante una sintaxis intuitiva y fácil de
+recordar, dividiendo los gráficos en componentes básicos.
 
-\texttt{ggplot2} destaca por su uso de una \emph{gramática de gráficos},
-que simplifica el proceso de creación de gráficos. Al aprender unos
-pocos componentes esenciales de esta gramática, los usuarios pueden
-generar una amplia variedad de gráficos con facilidad. Además, su
-comportamiento por defecto está diseñado para producir resultados
-agradables y funcionales con código conciso y legible, lo que facilita
-su uso por principiantes. Como factor limitante está el que está
-diseñado para trabajar con tablas de formato \emph{tidy} (con filas con
-observaciones y columnas conteniendo variables), pero un número
-sustancial de conjuntos de datos se trabajan en ese formato, o pueden
-convertirse como tal.
+\texttt{ggplot2} destaca por su uso de una \emph{gramática de gráficos}
+-- de donde vienen las primeras dos g -- que simplifica el proceso de
+creación de gráficos. Al aprender unos pocos componentes esenciales de
+esta gramática, los usuarios pueden generar una amplia variedad de
+gráficos con facilidad. Además, su comportamiento por defecto está
+diseñado para producir resultados agradables y funcionales con código
+conciso y legible, lo que facilita su uso por principiantes. Como factor
+limitante está el que está diseñado para trabajar con tablas de formato
+\emph{tidy} (con filas con observaciones y columnas conteniendo
+variables), pero un número sustancial de conjuntos de datos se trabajan
+en ese formato, o pueden convertirse como tal.
 
 \subsection{Componentes de un
 gráfico}\label{componentes-de-un-gruxe1fico}
@@ -382,6 +388,8 @@ componentes.
   referencia.
 \end{itemize}
 
+\subsection{Lienzo vacío y capas}\label{lienzo-vacuxedo-y-capas}
+
 Manteniéndonos cerca de los datos utilizados en la semana pasada,
 construiremos por \textbf{\emph{capas}} la información que va en el
 gráfico.
@@ -408,9 +416,8 @@ En ggplot, la información entonces se suministra al lienzo por capas, y
 se le pueden añadir adicionales. Esto tomará la forma de código
 siguiente:
 
-DATOS \textbar\textgreater{} ggplot() \textbar\textgreater{} CAPA 1
-\textbar\textgreater{} CAPA 2 \textbar\textgreater{} \ldots{}
-\textbar\textgreater{} CAPA N
+DATOS \textbar\textgreater{} ggplot() + CAPA 1 + CAPA 2 + \ldots{} +
+CAPA N
 
 Usualmente, la primera capa que añadimos define la geometría. Si
 queremos hacer un diagrama de dispersión, ¿qué geometría deberíamos
@@ -420,7 +427,7 @@ Si vemos la hoja de referencia (en la carpeta del taller 2, o accesible
 en esta página:
 \url{https://github.com/rstudio/cheatsheets/blob/main/data-visualization.pdf}),
 vemos que la función utilizada para crear gráficos con esta geometría
-puntillista es geom\_point.
+puntillista es \texttt{geom\_point}.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -491,11 +498,17 @@ punto. Pero esto se puede corregir:
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{p}\SpecialCharTok{+}
-  \FunctionTok{geom\_text}\NormalTok{(}\FunctionTok{aes}\NormalTok{(population}\SpecialCharTok{/}\DecValTok{10}\SpecialCharTok{\^{}}\DecValTok{6}\NormalTok{, total, }\AttributeTok{label =}\NormalTok{ abb),}\AttributeTok{nudge\_x =} \FloatTok{1.5}\NormalTok{)}
+  \FunctionTok{geom\_text}\NormalTok{(}\FunctionTok{aes}\NormalTok{(population}\SpecialCharTok{/}\DecValTok{10}\SpecialCharTok{\^{}}\DecValTok{6}\NormalTok{, total, }\AttributeTok{label =}\NormalTok{ abb),}\AttributeTok{nudge\_x =} \FloatTok{1.5}\NormalTok{) }
 \end{Highlighting}
 \end{Shaded}
 
 \includegraphics{Taller-2_files/figure-latex/Empujando etiquetas en el eje-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#nudge\_y desplazaría el texto en el eje de y}
+\end{Highlighting}
+\end{Shaded}
 
 En este caso hemos empujado a través del eje de equis la etiqueta de
 texto con un valor numérico de 1.5. Valores mayores aumentarían la
@@ -521,6 +534,9 @@ estas jurisdicciones. Esto se hace al añadir la opción de
 
 \includegraphics{Taller-2_files/figure-latex/Añadiendo color-1.pdf}
 
+Ahora paso nuevamente a añadir etiquetas abreviadas, con el color por
+región.
+
 \begin{Shaded}
 \begin{Highlighting}[]
 \CommentTok{\# Añadir etiquetas desplazadas en el eje x (con color por región)}
@@ -531,6 +547,9 @@ estas jurisdicciones. Esto se hace al añadir la opción de
 \end{Shaded}
 
 \includegraphics{Taller-2_files/figure-latex/Añadiendo nuevamente etiquetas de abreviación jurisdiccional-1.pdf}
+
+Y para darle más información al gráfico le añadimos etiquetas y títulos
+que sean más informativas que los nombres de variables.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -580,6 +599,8 @@ Podríamos añadir una capa temática, usando el paquete \texttt{ggthemes},
 que tiene un catálogo estético variado, que recomiendo verifiquen a
 través de
 \url{https://yutannihilation.github.io/allYourFigureAreBelongToUs/ggthemes/}.
+Esto es en adición a los que ya ofrece el paquete de \texttt{ggplot2}
+\url{https://ggplot2.tidyverse.org/reference/ggtheme.html}.
 
 En este caso le añadiré una visualización al estilo del semanario
 británico \emph{The Economist.}
@@ -592,6 +613,9 @@ británico \emph{The Economist.}
 \end{Shaded}
 
 \includegraphics{Taller-2_files/figure-latex/Añadiendo temas-1.pdf}
+
+\subsection{El gráfico que
+buscábamos}\label{el-gruxe1fico-que-buscuxe1bamos}
 
 Normalmente queremos añadir formas o anotaciones a las figuras que no se
 derivan directamente del mapeo estético; algunos ejemplos incluyen
@@ -642,7 +666,403 @@ adecuada también (logarítmica):
 \includegraphics{Taller-2_files/figure-latex/el gráfico que buscábamos (datos de asesinatos)-1.pdf}
 
 He aquí los pasos entonces que necesitábamos para recrear la imagen
-arriba.
+arriba.'
+
+\subsection{\texorpdfstring{Gráficos rápidos:
+\texttt{qplot()}}{Gráficos rápidos: qplot()}}\label{gruxe1ficos-ruxe1pidos-qplot}
+
+Si bien esto ha sido útil y han podido ver cómo generar gráficas
+complejas siguiendo la gramática de gráficos, es probable que en algún
+momento quieran ver rápidamente unas relaciones visuales de manera
+instantánea, con la intención luego de volver y darle mejor forma y
+seguir las complicaciones de un gráfico de \texttt{ggplot2} con todas
+sus capas. La opción que da \texttt{ggplot2} a esto es el uso de
+\texttt{qplot()}.
+
+Por ejemplo, aquí modifiqué los grupos de jurisdicciones de Estados
+Unidos a unos grupos específicos, y creo un gráfico para ver densidades
+con relleno (\texttt{fill=grupo}) y con líneas que también sirven para
+demarcar estos grupos de manera distinta (e.g.~línea sólida, línea
+entrecortada). Noten que ha corrido todo el gráfico de la última línea.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{murdersg}\OtherTok{\textless{}{-}}\NormalTok{murders }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{tasa=}\NormalTok{ total}\SpecialCharTok{/}\NormalTok{population }\SpecialCharTok{*}\DecValTok{10}\SpecialCharTok{\^{}}\DecValTok{5}\NormalTok{,}
+\NormalTok{    ,}\AttributeTok{grupo =} \FunctionTok{case\_when}\NormalTok{(}
+\NormalTok{    abb }\SpecialCharTok{\%in\%} \FunctionTok{c}\NormalTok{(}\StringTok{"ME"}\NormalTok{, }\StringTok{"NH"}\NormalTok{, }\StringTok{"VT"}\NormalTok{, }\StringTok{"MA"}\NormalTok{, }\StringTok{"RI"}\NormalTok{, }\StringTok{"CT"}\NormalTok{) }\SpecialCharTok{\textasciitilde{}} \StringTok{"Nueva Inglaterra"}\NormalTok{,}
+\NormalTok{    abb }\SpecialCharTok{\%in\%} \FunctionTok{c}\NormalTok{(}\StringTok{"WA"}\NormalTok{, }\StringTok{"OR"}\NormalTok{, }\StringTok{"CA"}\NormalTok{) }\SpecialCharTok{\textasciitilde{}} \StringTok{"Costa del Pacífico"}\NormalTok{,}
+\NormalTok{    region }\SpecialCharTok{==} \StringTok{"South"} \SpecialCharTok{\textasciitilde{}} \StringTok{"el Sur"}\NormalTok{,}
+    \ConstantTok{TRUE} \SpecialCharTok{\textasciitilde{}} \StringTok{"Otras regiones"}\NormalTok{))}
+\FunctionTok{qplot}\NormalTok{(tasa, }\AttributeTok{data =}\NormalTok{ murdersg, }\AttributeTok{geom=} \StringTok{"density"}\NormalTok{, }\AttributeTok{fill =}\NormalTok{ grupo, }\AttributeTok{linetype=}\NormalTok{grupo)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: `qplot()` was deprecated in ggplot2 3.4.0.
+## This warning is displayed once every 8 hours.
+## Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
+## generated.
+\end{verbatim}
+
+\includegraphics{Taller-2_files/figure-latex/Un qplot inicial-1.pdf}
+
+En las siguientes líneas pido y ejecuto variaciones de gráficos con
+qplot con los datos de altura del libro de Irizarry:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{data}\NormalTok{(heights)            }
+\NormalTok{b}\OtherTok{\textless{}{-}}\NormalTok{heights}\SpecialCharTok{|\textgreater{}}\FunctionTok{ggplot}\NormalTok{()}
+\FunctionTok{qplot}\NormalTok{(sex, height, }\AttributeTok{data =}\NormalTok{ heights, }\AttributeTok{geom=} \StringTok{"boxplot"}\NormalTok{, }\AttributeTok{fill =}\NormalTok{ sex)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Taller-2_files/figure-latex/Varios qplots-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{qplot}\NormalTok{(sex, height, }\AttributeTok{data =}\NormalTok{ heights, }\AttributeTok{geom=} \StringTok{"violin"}\NormalTok{, }\AttributeTok{fill =}\NormalTok{ sex)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Taller-2_files/figure-latex/Varios qplots-2.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{qplot}\NormalTok{(sex, height, }\AttributeTok{data =}\NormalTok{ heights, }\AttributeTok{geom =} \StringTok{"dotplot"}\NormalTok{,}
+      \AttributeTok{stackdir =} \StringTok{"center"}\NormalTok{, }\AttributeTok{binaxis =} \StringTok{"y"}\NormalTok{, }\AttributeTok{dotsize =} \FloatTok{0.3}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Bin width defaults to 1/30 of the range of the data. Pick better value with
+## `binwidth`.
+\end{verbatim}
+
+\includegraphics{Taller-2_files/figure-latex/Varios qplots-3.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{qplot}\NormalTok{(height, }\AttributeTok{data =}\NormalTok{ heights, }\AttributeTok{geom =} \StringTok{"density"}\NormalTok{, }\AttributeTok{fill =}\NormalTok{ sex)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Taller-2_files/figure-latex/Varios qplots-4.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{qplot}\NormalTok{(height, }\AttributeTok{data =}\NormalTok{ heights, }\AttributeTok{geom =} \StringTok{"density"}\NormalTok{, }\AttributeTok{color =}\NormalTok{ sex, }\AttributeTok{linetype =}\NormalTok{ sex)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Taller-2_files/figure-latex/Varios qplots-5.pdf}
+
+Nuevamente podríamos mostrar información adicional, como medias añadidas
+fuera de las estéticas definidas dentro del mapeo:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{mu\_alt}\OtherTok{\textless{}{-}}\NormalTok{heights }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{group\_by}\NormalTok{(sex) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{summarise}\NormalTok{(}\AttributeTok{media=}\FunctionTok{mean}\NormalTok{(height))}
+
+\NormalTok{c}\OtherTok{\textless{}{-}}\NormalTok{heights}\SpecialCharTok{|\textgreater{}}\FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ height))}
+\NormalTok{c}\SpecialCharTok{+}\FunctionTok{geom\_density}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{fill =}\NormalTok{ sex), }\AttributeTok{alpha=}\FloatTok{0.4}\NormalTok{) }\CommentTok{\#el alpha le da un nivel de transparencia }
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Taller-2_files/figure-latex/Dando a densidades transparencias-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#¿qué creen que pase si suben el valor a 0.9 o lo reducen a 0.1?}
+\end{Highlighting}
+\end{Shaded}
+
+Noten que si tenemos dos categorías, al pedir color, tiende a establecer
+a uno con un rojo magenta y al segundo con un azul cian (aciano o
+ciano), en este caso suavizado y transparentado para poder ver las
+distribuciones. Sin embargo, podemos editar el color manualmente, a la
+vez que añadimos complicaciones como una media de alturas por grupo.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{c}\SpecialCharTok{+} \FunctionTok{geom\_density}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{color =}\NormalTok{ sex)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_vline}\NormalTok{(}\AttributeTok{data=}\NormalTok{mu\_alt, }\FunctionTok{aes}\NormalTok{(}\AttributeTok{xintercept=}\NormalTok{media, }\AttributeTok{color=}\NormalTok{sex),}
+             \AttributeTok{linetype=}\StringTok{"dashed"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{scale\_color\_manual}\NormalTok{(}\AttributeTok{values=}\FunctionTok{c}\NormalTok{(}\StringTok{"\#999999"}\NormalTok{, }\StringTok{"\#E69F00"}\NormalTok{)) }\CommentTok{\#noten que aquí le di los colores con código alfanumérico, un gris plateado y un dorado.}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Taller-2_files/figure-latex/Añadiendo color manualmente-1.pdf}
+
+Hay varios métodos para asignar colores al nombrarlos en R. Se puede
+hacer por nombre (en inglés), con códigos alfanúmericos, y se puede
+también importar paletas de colores con paquetes específicos. Considero
+útil revisar las opciones en este enlace:
+\url{https://r-graph-gallery.com/ggplot2-color.html}
+
+\subsection{Alcanzando visualización de densidades y sus cambios a
+través del
+tiempo}\label{alcanzando-visualizaciuxf3n-de-densidades-y-sus-cambios-a-travuxe9s-del-tiempo}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(dslabs)}
+\FunctionTok{data}\NormalTok{(gapminder)}
+\NormalTok{gapminder }\SpecialCharTok{|\textgreater{}} \FunctionTok{as\_tibble}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## # A tibble: 10,545 x 9
+##    country   year infant_mortality life_expectancy fertility population      gdp
+##    <fct>    <int>            <dbl>           <dbl>     <dbl>      <dbl>    <dbl>
+##  1 Albania   1960            115.             62.9      6.19    1636054 NA      
+##  2 Algeria   1960            148.             47.5      7.65   11124892  1.38e10
+##  3 Angola    1960            208              36.0      7.32    5270844 NA      
+##  4 Antigua~  1960             NA              63.0      4.43      54681 NA      
+##  5 Argenti~  1960             59.9            65.4      3.11   20619075  1.08e11
+##  6 Armenia   1960             NA              66.9      4.55    1867396 NA      
+##  7 Aruba     1960             NA              65.7      4.82      54208 NA      
+##  8 Austral~  1960             20.3            70.9      3.45   10292328  9.67e10
+##  9 Austria   1960             37.3            68.8      2.7     7065525  5.24e10
+## 10 Azerbai~  1960             NA              61.3      5.57    3897889 NA      
+## # i 10,535 more rows
+## # i 2 more variables: continent <fct>, region <fct>
+\end{verbatim}
+
+Vemos que estos datos incluyen una variedad de información a nivel de
+país, que incluye un número de años para ellos.
+
+Podemos ver los grupos de países por continentes usando una matriz de
+gráficos, con cuadrículas paradas y acostadas:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{filter}\NormalTok{(gapminder, year}\SpecialCharTok{\%in\%}\FunctionTok{c}\NormalTok{(}\DecValTok{1962}\NormalTok{, }\DecValTok{2012}\NormalTok{)) }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(fertility, life\_expectancy, }\AttributeTok{colour =}\NormalTok{ continent)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_point}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{facet\_grid}\NormalTok{(continent}\SpecialCharTok{\textasciitilde{}}\NormalTok{year)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Taller-2_files/figure-latex/unnamed-chunk-4-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{filter}\NormalTok{(gapminder, year}\SpecialCharTok{\%in\%}\FunctionTok{c}\NormalTok{(}\DecValTok{1962}\NormalTok{, }\DecValTok{2012}\NormalTok{)) }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(fertility, life\_expectancy, }\AttributeTok{col =}\NormalTok{ continent)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_point}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{facet\_grid}\NormalTok{(. }\SpecialCharTok{\textasciitilde{}}\NormalTok{ year)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Taller-2_files/figure-latex/unnamed-chunk-4-2.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{years }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\DecValTok{1962}\NormalTok{, }\DecValTok{1980}\NormalTok{, }\DecValTok{1990}\NormalTok{, }\DecValTok{2000}\NormalTok{, }\DecValTok{2012}\NormalTok{,}\DecValTok{2015}\NormalTok{)}
+\NormalTok{continents }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"Europe"}\NormalTok{, }\StringTok{"Asia"}\NormalTok{)}
+\NormalTok{gapminder }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{filter}\NormalTok{(year }\SpecialCharTok{\%in\%}\NormalTok{ years }\SpecialCharTok{\&}\NormalTok{ continent }\SpecialCharTok{\%in\%}\NormalTok{ continents) }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{ggplot}\NormalTok{( }\FunctionTok{aes}\NormalTok{(fertility, life\_expectancy, }\AttributeTok{colour =}\NormalTok{ continent)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_point}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{facet\_wrap}\NormalTok{(}\SpecialCharTok{\textasciitilde{}}\NormalTok{year)}\SpecialCharTok{+}\FunctionTok{labs}\NormalTok{(}\AttributeTok{x=}\StringTok{"Fertilidad"}\NormalTok{, }\AttributeTok{y=}\StringTok{"Esperanza de vida"}\NormalTok{,}\AttributeTok{colour=}\StringTok{"Continente"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Taller-2_files/figure-latex/unnamed-chunk-4-3.pdf}
+
+En este caso podemos apreciar mejor cómo la dispersión y distribución de
+países entre los años 1960s y el presente reciente ha ido encaminado a
+una convergencia en estándares de vida, dejando atrás los puntos donde
+originaron estereotipos que aún persisten sobre cómo son las vidas y
+experiencias de distintas regiones del planeta (sin desestimar
+diferencias e inequidades presentes).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{gapminder }\OtherTok{\textless{}{-}}\NormalTok{ gapminder }\SpecialCharTok{|\textgreater{}} \FunctionTok{mutate}\NormalTok{(dólares}\AttributeTok{\_diarios =}\NormalTok{ gdp}\SpecialCharTok{/}\NormalTok{population}\SpecialCharTok{/}\DecValTok{365}\NormalTok{)}
+
+\NormalTok{antaño }\OtherTok{\textless{}{-}} \DecValTok{1970}
+
+\NormalTok{gapminder }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{filter}\NormalTok{(year }\SpecialCharTok{==}\NormalTok{ antaño }\SpecialCharTok{\&} \SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{(gdp)) }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{region =} \FunctionTok{reorder}\NormalTok{(region, dólares\_diarios, }\AttributeTok{FUN =}\NormalTok{ median)) }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(dólares\_diarios, region)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_point}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{scale\_x\_continuous}\NormalTok{(}\AttributeTok{trans =} \StringTok{"log2"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Taller-2_files/figure-latex/Creando visualización sobre ingresos diarios-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{gapminder }\OtherTok{\textless{}{-}}\NormalTok{ gapminder }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{grupo =} \FunctionTok{case\_when}\NormalTok{(}
+\NormalTok{    region }\SpecialCharTok{\%in\%} \FunctionTok{c}\NormalTok{(}\StringTok{"Western Europe"}\NormalTok{, }\StringTok{"Northern Europe"}\NormalTok{,}\StringTok{"Southern Europe"}\NormalTok{,}
+                  \StringTok{"Northern America"}\NormalTok{,}
+                  \StringTok{"Australia and New Zealand"}\NormalTok{) }\SpecialCharTok{\textasciitilde{}} \StringTok{"Occidente"}\NormalTok{,}
+\NormalTok{    region }\SpecialCharTok{\%in\%} \FunctionTok{c}\NormalTok{(}\StringTok{"Eastern Asia"}\NormalTok{, }\StringTok{"South{-}Eastern Asia"}\NormalTok{) }\SpecialCharTok{\textasciitilde{}} \StringTok{"Asia oriental"}\NormalTok{,}
+\NormalTok{    region }\SpecialCharTok{\%in\%} \FunctionTok{c}\NormalTok{(}\StringTok{"Caribbean"}\NormalTok{, }\StringTok{"Central America"}\NormalTok{,}
+                  \StringTok{"South America"}\NormalTok{) }\SpecialCharTok{\textasciitilde{}} \StringTok{"Latinoamérica"}\NormalTok{,}
+\NormalTok{    continent }\SpecialCharTok{==} \StringTok{"Africa"} \SpecialCharTok{\&}
+\NormalTok{      region }\SpecialCharTok{!=} \StringTok{"Northern Africa"} \SpecialCharTok{\textasciitilde{}} \StringTok{"África subsahariana"}\NormalTok{,}
+    \ConstantTok{TRUE} \SpecialCharTok{\textasciitilde{}} \StringTok{"Otros"}\NormalTok{))}
+\CommentTok{\#le damos orden a los niveles}
+\NormalTok{gapminder }\OtherTok{\textless{}{-}}\NormalTok{ gapminder }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{grupo =} \FunctionTok{factor}\NormalTok{(grupo, }\AttributeTok{levels =} \FunctionTok{c}\NormalTok{(}\StringTok{"Otros"}\NormalTok{, }\StringTok{"Latinoamérica"}\NormalTok{,}
+                                          \StringTok{"Asia oriental"}\NormalTok{, }\StringTok{"África subsahariana"}\NormalTok{,}
+                                          \StringTok{"Occidente"}\NormalTok{)))}
+
+\NormalTok{p }\OtherTok{\textless{}{-}}\NormalTok{ gapminder }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{filter}\NormalTok{(year }\SpecialCharTok{==}\NormalTok{ antaño }\SpecialCharTok{\&} \SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{(gdp)) }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(grupo, dólares\_diarios)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_boxplot}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{scale\_y\_continuous}\NormalTok{(}\AttributeTok{trans =} \StringTok{"log2"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{xlab}\NormalTok{(}\StringTok{""}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{theme}\NormalTok{(}\AttributeTok{axis.text.x =} \FunctionTok{element\_text}\NormalTok{(}\AttributeTok{angle =} \DecValTok{90}\NormalTok{, }\AttributeTok{hjust =} \DecValTok{1}\NormalTok{))}
+\NormalTok{p}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Taller-2_files/figure-latex/Creando categorías para ver mejor dinámicas-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{p }\SpecialCharTok{+} \FunctionTok{geom\_point}\NormalTok{(}\AttributeTok{alpha =} \FloatTok{0.5}\NormalTok{) }\CommentTok{\#añadiendo puntos para ver mejor distribuciones y cantidad de casos}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Taller-2_files/figure-latex/Creando categorías para ver mejor dinámicas-2.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(ggridges)}
+\NormalTok{p }\OtherTok{\textless{}{-}}\NormalTok{ gapminder }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{filter}\NormalTok{(year }\SpecialCharTok{==}\NormalTok{ antaño }\SpecialCharTok{\&} \SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{(dólares\_diarios)) }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(dólares\_diarios, grupo)) }\SpecialCharTok{+}
+  \FunctionTok{scale\_x\_continuous}\NormalTok{(}\AttributeTok{trans =} \StringTok{"log2"}\NormalTok{)}
+\NormalTok{p }\SpecialCharTok{+} \FunctionTok{geom\_density\_ridges}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Picking joint bandwidth of 0.648
+\end{verbatim}
+
+\includegraphics{Taller-2_files/figure-latex/Densidades-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{p }\SpecialCharTok{+} \FunctionTok{geom\_density\_ridges}\NormalTok{(}\AttributeTok{jittered\_points =} \ConstantTok{TRUE}\NormalTok{,}
+                        \AttributeTok{position =} \FunctionTok{position\_points\_jitter}\NormalTok{(}\AttributeTok{height =} \DecValTok{0}\NormalTok{),}
+                        \AttributeTok{point\_shape =} \StringTok{\textquotesingle{}|\textquotesingle{}}\NormalTok{, }\AttributeTok{point\_size =} \DecValTok{3}\NormalTok{,}
+                        \AttributeTok{point\_alpha =} \DecValTok{1}\NormalTok{, }\AttributeTok{alpha =} \FloatTok{0.7}\NormalTok{) }
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Picking joint bandwidth of 0.648
+\end{verbatim}
+
+\includegraphics{Taller-2_files/figure-latex/Densidades con información de observaciones-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{antaño }\OtherTok{\textless{}{-}} \DecValTok{1970}
+\NormalTok{año\_presente }\OtherTok{\textless{}{-}} \DecValTok{2010}
+
+\NormalTok{years }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(antaño, año\_presente)}
+\NormalTok{gapminder }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{filter}\NormalTok{(year }\SpecialCharTok{\%in\%}\NormalTok{ years }\SpecialCharTok{\&} \SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{(gdp)) }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{west =} \FunctionTok{ifelse}\NormalTok{(grupo }\SpecialCharTok{==} \StringTok{"Occidente"}\NormalTok{, }\StringTok{"Occidente"}\NormalTok{, }\StringTok{"El Resto"}\NormalTok{)) }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(dólares\_diarios)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_histogram}\NormalTok{(}\AttributeTok{binwidth =} \DecValTok{1}\NormalTok{, }\AttributeTok{color =} \StringTok{"black"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{scale\_x\_continuous}\NormalTok{(}\AttributeTok{trans =} \StringTok{"log2"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{facet\_grid}\NormalTok{(year }\SpecialCharTok{\textasciitilde{}}\NormalTok{ west)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Taller-2_files/figure-latex/Histogramas comparativos en facetas-1.pdf}
+Sabemos que muchos países surgieron después de 1970 (razón por la cual
+el histograma se nutre para el grupo \textbf{El Resto}), así que para
+comparar los países que tienen toda la información y han existido
+consistentemente entre esos periodos y ver si hay cambios y de dónde
+surgen en distribuciones podemos hacer lo siguiente:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{country\_list\_1 }\OtherTok{\textless{}{-}}\NormalTok{ gapminder }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{filter}\NormalTok{(year }\SpecialCharTok{==}\NormalTok{ antaño }\SpecialCharTok{\&} \SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{(dólares\_diarios)) }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{pull}\NormalTok{(country)}
+
+\NormalTok{country\_list\_2 }\OtherTok{\textless{}{-}}\NormalTok{ gapminder }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{filter}\NormalTok{(year }\SpecialCharTok{==}\NormalTok{ año\_presente }\SpecialCharTok{\&} \SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{(dólares\_diarios)) }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{pull}\NormalTok{(country)}
+
+\NormalTok{country\_list }\OtherTok{\textless{}{-}} \FunctionTok{intersect}\NormalTok{(country\_list\_1, country\_list\_2)}
+
+\NormalTok{gapminder }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{filter}\NormalTok{(year }\SpecialCharTok{\%in\%}\NormalTok{ years }\SpecialCharTok{\&}\NormalTok{ country }\SpecialCharTok{\%in\%}\NormalTok{ country\_list) }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(grupo, dólares\_diarios)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_boxplot}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{theme}\NormalTok{(}\AttributeTok{axis.text.x =} \FunctionTok{element\_text}\NormalTok{(}\AttributeTok{angle =} \DecValTok{90}\NormalTok{, }\AttributeTok{hjust =} \DecValTok{1}\NormalTok{)) }\SpecialCharTok{+}
+  \FunctionTok{scale\_y\_continuous}\NormalTok{(}\AttributeTok{trans =} \StringTok{"log2"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{xlab}\NormalTok{(}\StringTok{""}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{facet\_grid}\NormalTok{(. }\SpecialCharTok{\textasciitilde{}}\NormalTok{ year)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Taller-2_files/figure-latex/Wrangling para comparar chinas con chinas-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{gapminder }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{filter}\NormalTok{(year }\SpecialCharTok{\%in\%}\NormalTok{ years }\SpecialCharTok{\&} \SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{(dólares\_diarios)) }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(dólares\_diarios, grupo)) }\SpecialCharTok{+}
+  \FunctionTok{scale\_x\_continuous}\NormalTok{(}\AttributeTok{trans =} \StringTok{"log2"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{geom\_density\_ridges}\NormalTok{(}\AttributeTok{adjust =} \FloatTok{1.5}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{facet\_grid}\NormalTok{(. }\SpecialCharTok{\textasciitilde{}}\NormalTok{ year)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning in geom_density_ridges(adjust = 1.5): Ignoring unknown parameters:
+## `adjust`
+\end{verbatim}
+
+\begin{verbatim}
+## Picking joint bandwidth of 0.648
+\end{verbatim}
+
+\begin{verbatim}
+## Picking joint bandwidth of 0.726
+\end{verbatim}
+
+\includegraphics{Taller-2_files/figure-latex/Wrangling para comparar chinas con chinas-2.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{gapminder }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{filter}\NormalTok{(year }\SpecialCharTok{\%in\%}\NormalTok{ years }\SpecialCharTok{\&}\NormalTok{ country }\SpecialCharTok{\%in\%}\NormalTok{ country\_list) }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{group\_by}\NormalTok{(year) }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{weight =}\NormalTok{ population}\SpecialCharTok{/}\FunctionTok{sum}\NormalTok{(population)}\SpecialCharTok{*}\DecValTok{2}\NormalTok{) }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{ungroup}\NormalTok{() }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(dólares\_diarios, }\AttributeTok{fill =}\NormalTok{ grupo)) }\SpecialCharTok{+}
+  \FunctionTok{scale\_x\_continuous}\NormalTok{(}\AttributeTok{trans =} \StringTok{"log2"}\NormalTok{, }\AttributeTok{limit =} \FunctionTok{c}\NormalTok{(}\FloatTok{0.125}\NormalTok{, }\DecValTok{300}\NormalTok{)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_density}\NormalTok{(}\AttributeTok{alpha =} \FloatTok{0.2}\NormalTok{, }\AttributeTok{bw =} \FloatTok{0.75}\NormalTok{, }\AttributeTok{position =} \StringTok{"stack"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{facet\_grid}\NormalTok{(year }\SpecialCharTok{\textasciitilde{}}\NormalTok{ .)}\SpecialCharTok{+}\FunctionTok{labs}\NormalTok{(}\AttributeTok{title =} \StringTok{"Densidades apiladas: ingreso en dólares por día per cápita entre 1970 y 2010"}\NormalTok{,}
+         \AttributeTok{x =} \StringTok{"Dólares por día"}\NormalTok{, }
+         \AttributeTok{y =} \StringTok{"Densidad"}\NormalTok{,}
+         \AttributeTok{color =} \StringTok{"Regiones"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Taller-2_files/figure-latex/Wrangling para comparar chinas con chinas-3.pdf}
 
 \subsection{Datos del Covid}\label{datos-del-covid}
 
@@ -655,12 +1075,14 @@ informábamos con gráficas así como números y tablas del progreso de la
 enfermedad y su avance a través de los países del planeta, así como la
 variable tasa de mortalidad que la acompañaba. Varios científicos
 lanzaron programas para recoger y expresar estos datos al público
-general para mantenernos todos bien informados. En mi caso tomé código y
-datos que se recogían a menudo y produje por unos meses varios tipos de
-gráficos para representar el desarrollo de la pandemia. Aquí doy una
-versión del código que utilicé para estos fines (modificando las fechas
-ya que se siguió recopilando esa información mucho después de cuando
-dejara de actualizar esos gráficos.
+general para mantenernos todos bien informados.
+
+En mi caso tomé código y datos que se recogían a menudo y produje por
+unos meses varios tipos de gráficos para representar el desarrollo de la
+pandemia (y tratar de entender qué ocurría de una manera que yo pudiera
+digerir e informar). Aquí doy una versión del código que utilicé para
+estos fines (modificando las fechas ya que se siguió recopilando esa
+información mucho después de cuando dejara de actualizar esos gráficos.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -757,8 +1179,9 @@ dejara de actualizar esos gráficos.
 \end{verbatim}
 
 Vemos que los países están en inglés pero queremos que aparezcan en
-nuestro gráfico en español. Podemos modificar la información con
-\texttt{tidyverse}:
+nuestro gráfico en español (ya que interesa informar en mi caso a un
+público hispanófono). Podemos modificar la información con los paquetes
+de \texttt{tidyverse}:
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -949,16 +1372,19 @@ Luego, se configura el entorno con algunas opciones útiles:
 \end{verbatim}
 
 Podemos pasar por las variables en catálogo y seleccionar la que nos
-llame más la atención. En este caso, quiero revisar para algún futuro
-trabajo de investigación datos sobre el ingreso medio de los distritos
-representativos de Puerto Rico para los años 2018 y 2019 (que en el
-Censo aparecen como geografía tipo
+llame más la atención. Recomiendo verifiquen las variables a través de
+\texttt{View(variables)} ya que pueden usar una opción para filtrar e ir
+buscando entre las miles de opciones que tienen para uso. En este caso,
+quiero revisar para algún futuro trabajo de investigación datos sobre el
+ingreso mediano de los distritos representativos de Puerto Rico para los
+años 2018 y 2019 (que en el Censo aparecen como geografía tipo
 \texttt{state\ legislative\ district\ (lower\ chamber)}). Usaré la
 función \texttt{get\_acs}, podemos ver qué hace:
 
 \begin{Shaded}
 \begin{Highlighting}[]
 \NormalTok{?get\_acs}
+\FunctionTok{help}\NormalTok{(}\StringTok{"get\_acs"}\NormalTok{)}
 \end{Highlighting}
 \end{Shaded}
 
@@ -1035,9 +1461,10 @@ medianos por hogar.
 
 Habiendo obtenido las tablas, digamos que no quiero hacer sólo un
 análisis numérico a ojo. El ojo y mente humana rara vez puede determinar
-mucho al ver una colección grande de estos datos rápidamente. Pero al
-visualizar, podemos mejorar algo la velocidad en lo que entendemos lo
-que está ante nos.
+mucho al ver una colección grande de estos datos rápidamente.
+
+Pero al visualizar, podemos mejorar algo la velocidad en lo que
+entendemos algo más de lo que está ante nos.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1065,6 +1492,42 @@ que está ante nos.
 
 \includegraphics{Taller-2_files/figure-latex/Ingresos por distrito, cambios en encuestas-1.pdf}
 
+Noten que ordenó los distritos de una manera extraña: el 4 aparece antes
+de 40 y todos del 5 al 9 se fueron como posteriores al 40. Voy a
+corregir y renombrar los distritos:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{pr\_median\_combined }\OtherTok{\textless{}{-}}\NormalTok{ pr\_median\_combined }\SpecialCharTok{\%\textgreater{}\%}
+  \CommentTok{\# Extraer el número del distrito desde el nombre original y convertirlo en numérico}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{district\_number =} \FunctionTok{as.numeric}\NormalTok{(}\FunctionTok{gsub}\NormalTok{(}\StringTok{".*District ([0{-}9]+).*"}\NormalTok{, }\StringTok{"}\SpecialCharTok{\textbackslash{}\textbackslash{}}\StringTok{1"}\NormalTok{, NAME))) }\SpecialCharTok{\%\textgreater{}\%}
+  \CommentTok{\# Renombrar el campo NAME para que tenga el formato "Distrito 01" hasta "Distrito 40"}
+  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{NAME =} \FunctionTok{sprintf}\NormalTok{(}\StringTok{"Distrito \%02d"}\NormalTok{, district\_number)) }\SpecialCharTok{\%\textgreater{}\%}
+  \CommentTok{\# Ordenar los datos según el número de distrito}
+  \FunctionTok{arrange}\NormalTok{(district\_number)}
+
+\CommentTok{\# Crear el gráfico nuevamente}
+\NormalTok{pr\_median\_combined }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{ggplot}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{x =}\NormalTok{ NAME, }\AttributeTok{y =}\NormalTok{ estimate, }\AttributeTok{fill =} \FunctionTok{factor}\NormalTok{(year))) }\SpecialCharTok{+}
+  \FunctionTok{geom\_bar}\NormalTok{(}\AttributeTok{stat =} \StringTok{"identity"}\NormalTok{, }\AttributeTok{position =} \FunctionTok{position\_dodge}\NormalTok{(), }\AttributeTok{color =} \StringTok{"black"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{geom\_errorbar}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{ymin =}\NormalTok{ estimate }\SpecialCharTok{{-}}\NormalTok{ moe, }\AttributeTok{ymax =}\NormalTok{ estimate }\SpecialCharTok{+}\NormalTok{ moe), }
+                \AttributeTok{position =} \FunctionTok{position\_dodge}\NormalTok{(}\FloatTok{0.9}\NormalTok{), }\AttributeTok{width =} \FloatTok{0.25}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{scale\_y\_continuous}\NormalTok{(}\AttributeTok{labels =}\NormalTok{ scales}\SpecialCharTok{::}\FunctionTok{dollar\_format}\NormalTok{()) }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}
+    \AttributeTok{title =} \StringTok{"Ingreso mediano por distrito representativo en Puerto Rico (2018 vs 2019)"}\NormalTok{,}
+    \AttributeTok{x =} \StringTok{"Distrito representativo"}\NormalTok{,}
+    \AttributeTok{y =} \StringTok{"Ingreso mediano"}\NormalTok{,}
+    \AttributeTok{fill =} \StringTok{"Año"}
+\NormalTok{  ) }\SpecialCharTok{+}
+  \FunctionTok{theme\_minimal}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{theme}\NormalTok{(}
+    \AttributeTok{axis.text.x =} \FunctionTok{element\_text}\NormalTok{(}\AttributeTok{angle =} \DecValTok{90}\NormalTok{, }\AttributeTok{vjust =} \FloatTok{0.5}\NormalTok{, }\AttributeTok{hjust =} \DecValTok{1}\NormalTok{)  }\CommentTok{\# Rotar nombres de distritos 90 grados para legibilidad}
+\NormalTok{  )}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Taller-2_files/figure-latex/Haciendo cambios a nombres de distritos-1.pdf}
+
 Finalmente, usaremos esta información para generar un mapa geospacial
 con ggplot. En este caso tomamos como parte de los pasos una
 transformación de coordenadas para que el mapeo entienda dónde
@@ -1088,7 +1551,7 @@ posicionar las geometrías en el mapeo estético.
 \end{Shaded}
 
 \begin{verbatim}
-##   |                                                                              |                                                                      |   0%  |                                                                              |=                                                                     |   1%  |                                                                              |==                                                                    |   2%  |                                                                              |==                                                                    |   3%  |                                                                              |===                                                                   |   4%  |                                                                              |====                                                                  |   5%  |                                                                              |====                                                                  |   6%  |                                                                              |=====                                                                 |   7%  |                                                                              |======                                                                |   8%  |                                                                              |======                                                                |   9%  |                                                                              |=======                                                               |  10%  |                                                                              |========                                                              |  11%  |                                                                              |========                                                              |  12%  |                                                                              |=========                                                             |  13%  |                                                                              |==========                                                            |  14%  |                                                                              |==========                                                            |  15%  |                                                                              |===========                                                           |  16%  |                                                                              |============                                                          |  17%  |                                                                              |============                                                          |  18%  |                                                                              |=============                                                         |  19%  |                                                                              |==============                                                        |  19%  |                                                                              |==============                                                        |  20%  |                                                                              |===============                                                       |  21%  |                                                                              |===============                                                       |  22%  |                                                                              |================                                                      |  22%  |                                                                              |================                                                      |  23%  |                                                                              |=================                                                     |  24%  |                                                                              |==================                                                    |  25%  |                                                                              |==================                                                    |  26%  |                                                                              |===================                                                   |  27%  |                                                                              |====================                                                  |  28%  |                                                                              |====================                                                  |  29%  |                                                                              |=====================                                                 |  30%  |                                                                              |======================                                                |  31%  |                                                                              |======================                                                |  32%  |                                                                              |=======================                                               |  33%  |                                                                              |========================                                              |  34%  |                                                                              |========================                                              |  35%  |                                                                              |=========================                                             |  36%  |                                                                              |==========================                                            |  37%  |                                                                              |==========================                                            |  38%  |                                                                              |===========================                                           |  39%  |                                                                              |============================                                          |  39%  |                                                                              |============================                                          |  40%  |                                                                              |=============================                                         |  41%  |                                                                              |=============================                                         |  42%  |                                                                              |==============================                                        |  42%  |                                                                              |==============================                                        |  43%  |                                                                              |===============================                                       |  44%  |                                                                              |===============================                                       |  45%  |                                                                              |================================                                      |  45%  |                                                                              |================================                                      |  46%  |                                                                              |=================================                                     |  47%  |                                                                              |==================================                                    |  48%  |                                                                              |==================================                                    |  49%  |                                                                              |===================================                                   |  50%  |                                                                              |====================================                                  |  51%  |                                                                              |====================================                                  |  52%  |                                                                              |=====================================                                 |  53%  |                                                                              |======================================                                |  54%  |                                                                              |======================================                                |  55%  |                                                                              |=======================================                               |  56%  |                                                                              |========================================                              |  56%  |                                                                              |========================================                              |  57%  |                                                                              |=========================================                             |  58%  |                                                                              |=========================================                             |  59%  |                                                                              |==========================================                            |  59%  |                                                                              |==========================================                            |  60%  |                                                                              |===========================================                           |  61%  |                                                                              |===========================================                           |  62%  |                                                                              |============================================                          |  62%  |                                                                              |============================================                          |  63%  |                                                                              |=============================================                         |  64%  |                                                                              |=============================================                         |  65%  |                                                                              |==============================================                        |  65%  |                                                                              |==============================================                        |  66%  |                                                                              |===============================================                       |  67%  |                                                                              |===============================================                       |  68%  |                                                                              |================================================                      |  68%  |                                                                              |================================================                      |  69%  |                                                                              |=================================================                     |  70%  |                                                                              |=================================================                     |  71%  |                                                                              |==================================================                    |  72%  |                                                                              |===================================================                   |  73%  |                                                                              |===================================================                   |  74%  |                                                                              |====================================================                  |  74%  |                                                                              |=====================================================                 |  75%  |                                                                              |=====================================================                 |  76%  |                                                                              |======================================================                |  77%  |                                                                              |=======================================================               |  78%  |                                                                              |=======================================================               |  79%  |                                                                              |========================================================              |  80%  |                                                                              |=========================================================             |  81%  |                                                                              |=========================================================             |  82%  |                                                                              |==========================================================            |  83%  |                                                                              |===========================================================           |  84%  |                                                                              |===========================================================           |  85%  |                                                                              |============================================================          |  85%  |                                                                              |============================================================          |  86%  |                                                                              |=============================================================         |  87%  |                                                                              |=============================================================         |  88%  |                                                                              |==============================================================        |  88%  |                                                                              |==============================================================        |  89%  |                                                                              |===============================================================       |  90%  |                                                                              |===============================================================       |  91%  |                                                                              |================================================================      |  91%  |                                                                              |=================================================================     |  92%  |                                                                              |=================================================================     |  93%  |                                                                              |==================================================================    |  94%  |                                                                              |===================================================================   |  95%  |                                                                              |===================================================================   |  96%  |                                                                              |====================================================================  |  97%  |                                                                              |===================================================================== |  98%  |                                                                              |===================================================================== |  99%  |                                                                              |======================================================================| 100%
+##   |                                                                              |                                                                      |   0%  |                                                                              |=                                                                     |   1%  |                                                                              |==                                                                    |   2%  |                                                                              |==                                                                    |   3%  |                                                                              |===                                                                   |   4%  |                                                                              |====                                                                  |   5%  |                                                                              |====                                                                  |   6%  |                                                                              |=====                                                                 |   7%  |                                                                              |======                                                                |   8%  |                                                                              |======                                                                |   9%  |                                                                              |=======                                                               |  10%  |                                                                              |========                                                              |  11%  |                                                                              |========                                                              |  12%  |                                                                              |=========                                                             |  13%  |                                                                              |==========                                                            |  14%  |                                                                              |==========                                                            |  15%  |                                                                              |===========                                                           |  16%  |                                                                              |============                                                          |  17%  |                                                                              |============                                                          |  18%  |                                                                              |=============                                                         |  19%  |                                                                              |==============                                                        |  19%  |                                                                              |==============                                                        |  20%  |                                                                              |===============                                                       |  21%  |                                                                              |===============                                                       |  22%  |                                                                              |================                                                      |  22%  |                                                                              |================                                                      |  23%  |                                                                              |=================                                                     |  24%  |                                                                              |==================                                                    |  25%  |                                                                              |==================                                                    |  26%  |                                                                              |===================                                                   |  27%  |                                                                              |====================                                                  |  28%  |                                                                              |====================                                                  |  29%  |                                                                              |=====================                                                 |  30%  |                                                                              |======================                                                |  31%  |                                                                              |======================                                                |  32%  |                                                                              |=======================                                               |  33%  |                                                                              |========================                                              |  34%  |                                                                              |========================                                              |  35%  |                                                                              |=========================                                             |  36%  |                                                                              |==========================                                            |  37%  |                                                                              |==========================                                            |  38%  |                                                                              |===========================                                           |  39%  |                                                                              |============================                                          |  39%  |                                                                              |============================                                          |  40%  |                                                                              |=============================                                         |  41%  |                                                                              |=============================                                         |  42%  |                                                                              |==============================                                        |  42%  |                                                                              |==============================                                        |  43%  |                                                                              |===============================                                       |  44%  |                                                                              |===============================                                       |  45%  |                                                                              |================================                                      |  45%  |                                                                              |================================                                      |  46%  |                                                                              |=================================                                     |  47%  |                                                                              |==================================                                    |  48%  |                                                                              |==================================                                    |  49%  |                                                                              |===================================                                   |  50%  |                                                                              |====================================                                  |  51%  |                                                                              |====================================                                  |  52%  |                                                                              |=====================================                                 |  53%  |                                                                              |======================================                                |  54%  |                                                                              |======================================                                |  55%  |                                                                              |=======================================                               |  56%  |                                                                              |========================================                              |  56%  |                                                                              |========================================                              |  57%  |                                                                              |=========================================                             |  58%  |                                                                              |=========================================                             |  59%  |                                                                              |==========================================                            |  59%  |                                                                              |==========================================                            |  60%  |                                                                              |===========================================                           |  61%  |                                                                              |===========================================                           |  62%  |                                                                              |============================================                          |  62%  |                                                                              |============================================                          |  63%  |                                                                              |=============================================                         |  64%  |                                                                              |=============================================                         |  65%  |                                                                              |==============================================                        |  65%  |                                                                              |==============================================                        |  66%  |                                                                              |===============================================                       |  67%  |                                                                              |===============================================                       |  68%  |                                                                              |================================================                      |  68%  |                                                                              |================================================                      |  69%  |                                                                              |=================================================                     |  70%  |                                                                              |=================================================                     |  71%  |                                                                              |==================================================                    |  71%  |                                                                              |==================================================                    |  72%  |                                                                              |===================================================                   |  73%  |                                                                              |===================================================                   |  74%  |                                                                              |====================================================                  |  74%  |                                                                              |=====================================================                 |  75%  |                                                                              |=====================================================                 |  76%  |                                                                              |======================================================                |  77%  |                                                                              |=======================================================               |  78%  |                                                                              |=======================================================               |  79%  |                                                                              |========================================================              |  80%  |                                                                              |=========================================================             |  81%  |                                                                              |=========================================================             |  82%  |                                                                              |==========================================================            |  83%  |                                                                              |===========================================================           |  84%  |                                                                              |===========================================================           |  85%  |                                                                              |============================================================          |  85%  |                                                                              |============================================================          |  86%  |                                                                              |=============================================================         |  87%  |                                                                              |=============================================================         |  88%  |                                                                              |==============================================================        |  88%  |                                                                              |==============================================================        |  89%  |                                                                              |===============================================================       |  90%  |                                                                              |===============================================================       |  91%  |                                                                              |================================================================      |  91%  |                                                                              |=================================================================     |  92%  |                                                                              |=================================================================     |  93%  |                                                                              |==================================================================    |  94%  |                                                                              |===================================================================   |  95%  |                                                                              |===================================================================   |  96%  |                                                                              |====================================================================  |  97%  |                                                                              |===================================================================== |  98%  |                                                                              |===================================================================== |  99%  |                                                                              |======================================================================| 100%
 \end{verbatim}
 
 \begin{Shaded}
@@ -1224,7 +1687,7 @@ poblacionales del Censo Decenal de 2020.
 \end{Highlighting}
 \end{Shaded}
 
-\includegraphics{Taller-2_files/figure-latex/unnamed-chunk-4-1.pdf}
+\includegraphics{Taller-2_files/figure-latex/unnamed-chunk-6-1.pdf}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1251,7 +1714,7 @@ poblacionales del Censo Decenal de 2020.
 \end{verbatim}
 
 \begin{verbatim}
-##   |                                                                              |                                                                      |   0%  |                                                                              |==                                                                    |   3%  |                                                                              |====                                                                  |   5%  |                                                                              |======                                                                |   8%  |                                                                              |========                                                              |  11%  |                                                                              |==========                                                            |  14%  |                                                                              |===========                                                           |  16%  |                                                                              |=============                                                         |  19%  |                                                                              |===============                                                       |  22%  |                                                                              |=================                                                     |  25%  |                                                                              |===================                                                   |  27%  |                                                                              |=====================                                                 |  30%  |                                                                              |=======================                                               |  33%  |                                                                              |=========================                                             |  35%  |                                                                              |===========================                                           |  38%  |                                                                              |=============================                                         |  41%  |                                                                              |==============================                                        |  43%  |                                                                              |================================                                      |  46%  |                                                                              |==================================                                    |  48%  |                                                                              |====================================                                  |  51%  |                                                                              |======================================                                |  54%  |                                                                              |========================================                              |  57%  |                                                                              |==========================================                            |  59%  |                                                                              |===========================================                           |  62%  |                                                                              |=============================================                         |  65%  |                                                                              |===============================================                       |  68%  |                                                                              |=================================================                     |  70%  |                                                                              |===================================================                   |  73%  |                                                                              |=====================================================                 |  76%  |                                                                              |=======================================================               |  78%  |                                                                              |=========================================================             |  81%  |                                                                              |===========================================================           |  84%  |                                                                              |==============================================================        |  89%  |                                                                              |================================================================      |  92%  |                                                                              |==================================================================    |  95%  |                                                                              |====================================================================  |  97%  |                                                                              |======================================================================| 100%
+##   |                                                                              |                                                                      |   0%  |                                                                              |==                                                                    |   3%  |                                                                              |====                                                                  |   5%  |                                                                              |======                                                                |   8%  |                                                                              |========                                                              |  11%  |                                                                              |==========                                                            |  14%  |                                                                              |===========                                                           |  16%  |                                                                              |=============                                                         |  19%  |                                                                              |===============                                                       |  22%  |                                                                              |=================                                                     |  25%  |                                                                              |===================                                                   |  27%  |                                                                              |=====================                                                 |  30%  |                                                                              |=======================                                               |  33%  |                                                                              |=========================                                             |  35%  |                                                                              |===========================                                           |  38%  |                                                                              |=============================                                         |  41%  |                                                                              |==============================                                        |  43%  |                                                                              |================================                                      |  46%  |                                                                              |==================================                                    |  48%  |                                                                              |====================================                                  |  51%  |                                                                              |======================================                                |  54%  |                                                                              |========================================                              |  57%  |                                                                              |==========================================                            |  59%  |                                                                              |===========================================                           |  62%  |                                                                              |=============================================                         |  65%  |                                                                              |===============================================                       |  68%  |                                                                              |=================================================                     |  70%  |                                                                              |===================================================                   |  73%  |                                                                              |=====================================================                 |  76%  |                                                                              |=======================================================               |  78%  |                                                                              |=========================================================             |  81%  |                                                                              |===========================================================           |  84%  |                                                                              |=============================================================         |  86%  |                                                                              |==============================================================        |  89%  |                                                                              |================================================================      |  92%  |                                                                              |==================================================================    |  95%  |                                                                              |====================================================================  |  97%  |                                                                              |======================================================================| 100%
 \end{verbatim}
 
 \begin{verbatim}
@@ -1266,7 +1729,7 @@ poblacionales del Censo Decenal de 2020.
 \begin{Highlighting}[]
 \NormalTok{pr\_population }\OtherTok{\textless{}{-}} \FunctionTok{st\_transform}\NormalTok{(pr\_population, }\AttributeTok{crs =} \StringTok{"EPSG:3920"}\NormalTok{)}
 \NormalTok{pr\_unidades }\OtherTok{\textless{}{-}}\NormalTok{ pr\_unidades }\SpecialCharTok{\%\textgreater{}\%}
-  \FunctionTok{st\_join}\NormalTok{(pr\_population, }\AttributeTok{by =} \FunctionTok{c}\NormalTok{(}\StringTok{"GEOID"} \OtherTok{=} \StringTok{"GEOID"}\NormalTok{))  }\CommentTok{\# Assuming GEOID is the common field}
+  \FunctionTok{st\_join}\NormalTok{(pr\_population, }\AttributeTok{by =} \FunctionTok{c}\NormalTok{(}\StringTok{"GEOID"} \OtherTok{=} \StringTok{"GEOID"}\NormalTok{))  }\CommentTok{\# Asumiendo que comparten GEOID en común}
 \NormalTok{pr\_unidades}\SpecialCharTok{|\textgreater{}}\FunctionTok{ggplot}\NormalTok{() }\SpecialCharTok{+}
   \FunctionTok{geom\_sf}\NormalTok{(}\FunctionTok{aes}\NormalTok{(}\AttributeTok{fill =}\NormalTok{ value)) }\SpecialCharTok{+}  \CommentTok{\# \textasciigrave{}value\textasciigrave{} is the population count}
   \FunctionTok{scale\_fill\_viridis\_c}\NormalTok{(}\AttributeTok{option =} \StringTok{"plasma"}\NormalTok{, }\AttributeTok{name =} \StringTok{"Population"}\NormalTok{) }\SpecialCharTok{+}
@@ -1276,6 +1739,57 @@ poblacionales del Censo Decenal de 2020.
 \end{Shaded}
 
 \includegraphics{Taller-2_files/figure-latex/Población-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{pr\_unidades}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Simple feature collection with 5669 features and 10 fields
+## Geometry type: MULTIPOLYGON
+## Dimension:     XY
+## Bounding box:  xmin: 48384.55 ymin: 1985190 xmax: 262743.8 ymax: 2052288
+## Projected CRS: Puerto Rico / UTM zone 20N
+## First 10 features:
+##        Municipio Precinto Unidad Grupo DS DR       GEOID
+## 1   Barranquitas       70      5     3  6 26 72019952500
+## 1.1 Barranquitas       70      5     3  6 26 72045952100
+## 1.2 Barranquitas       70      5     3  6 26 72019952201
+## 1.3 Barranquitas       70      5     3  6 26 72045951800
+## 1.4 Barranquitas       70      5     3  6 26 72019952400
+## 1.5 Barranquitas       70      5     3  6 26 72009250100
+## 1.6 Barranquitas       70      5     3  6 26 72019952302
+## 1.7 Barranquitas       70      5     3  6 26 72019952202
+## 2      Cabo Rojo       46      2     3  4 20 72023830400
+## 2.1    Cabo Rojo       46      2     3  4 20 72023830102
+##                                                          NAME variable value
+## 1      Census Tract 9525, Barranquitas Municipio, Puerto Rico  P1_001N  7271
+## 1.1         Census Tract 9521, Comerío Municipio, Puerto Rico  P1_001N  4726
+## 1.2 Census Tract 9522.01, Barranquitas Municipio, Puerto Rico  P1_001N  4215
+## 1.3         Census Tract 9518, Comerío Municipio, Puerto Rico  P1_001N  5211
+## 1.4    Census Tract 9524, Barranquitas Municipio, Puerto Rico  P1_001N  2038
+## 1.5        Census Tract 2501, Aibonito Municipio, Puerto Rico  P1_001N  5597
+## 1.6 Census Tract 9523.02, Barranquitas Municipio, Puerto Rico  P1_001N  6319
+## 1.7 Census Tract 9522.02, Barranquitas Municipio, Puerto Rico  P1_001N  5369
+## 2         Census Tract 8304, Cabo Rojo Municipio, Puerto Rico  P1_001N  4268
+## 2.1    Census Tract 8301.02, Cabo Rojo Municipio, Puerto Rico  P1_001N  4709
+##                           geometry
+## 1   MULTIPOLYGON (((150446.9 20...
+## 1.1 MULTIPOLYGON (((150446.9 20...
+## 1.2 MULTIPOLYGON (((150446.9 20...
+## 1.3 MULTIPOLYGON (((150446.9 20...
+## 1.4 MULTIPOLYGON (((150446.9 20...
+## 1.5 MULTIPOLYGON (((150446.9 20...
+## 1.6 MULTIPOLYGON (((150446.9 20...
+## 1.7 MULTIPOLYGON (((150446.9 20...
+## 2   MULTIPOLYGON (((60772.66 20...
+## 2.1 MULTIPOLYGON (((60772.66 20...
+\end{verbatim}
+
+Podré llevarme estos datos para otros análisis en el futuro (o con datos
+más útiles).
 
 En este bloque, generamos un mapa que muestra la~\textbf{población por
 tracto censal}~en Puerto Rico. Cada tracto está coloreado según su
