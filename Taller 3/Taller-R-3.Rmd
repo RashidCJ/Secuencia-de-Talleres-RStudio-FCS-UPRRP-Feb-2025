@@ -1,5 +1,5 @@
 ---
-title: 'CACCS: Secuencia de taller de RStudio -- Parte 2'
+title: 'CACCS: Secuencia de taller de RStudio -- Parte 3'
 author: "Rashid C.J. Marcano Rivera"
 date: "18 de oct.ᵉ de 2024"
 output:
