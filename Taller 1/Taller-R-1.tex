@@ -114,7 +114,7 @@
 
 \title{CACCS: Secuencia de taller de RStudio -- Parte 1}
 \author{Rashid C.J. Marcano Rivera}
-\date{4 de oct.ᵉ de 2024}
+\date{5 de feb.º de 2025}
 
 \begin{document}
 \maketitle
@@ -129,9 +129,11 @@ Este taller está basado en notas de Paul Thibodeau y revisiones de
 profesores del departamento de psicología de BYU
 \href{https://fhssrsc.byu.edu/r-workshop}{(vea esa versión aquí)}.
 Adaptado al español y usando ejemplos del libro de Rafael Irizarry
-\href{https://leanpub.com/dslibro}{disponible aquí}.
+\href{https://leanpub.com/dslibro}{disponible aquí}. Ha sido revisado de
+la primera versión de este taller, brindado en el Centro Académico de
+Cómputos de Ciencias Sociales en octubre de 2024.
 
-\emph{Si aún no has instalado R, está
+\emph{Si aún no has instalado R, está disponible
 \href{http://cran.us.r-project.org/}{aquí}. Acto seguido,
 \href{https://posit.co/download/rstudio-desktop/}{baja RStudio}. Puedes
 también ir a la nube \href{https://posit.cloud/}{en Posit Cloud}.}
@@ -156,7 +158,7 @@ ecología, geografía o la biología molecular, entre otros.
 
 Mi idea tras esta secuencia de talleres sobre R es brindar una
 introducción para que puedan interactuar con R tal que los sentimientos
-de frustración o ansiedad que puedan surgir al interactuar con este
+de frustración o ansiedad que puedan surgir al trabajar con este
 lenguaje al usarlo en variedad de circunstancias. Este taller presume en
 general ciertos conocimientos básicos en estadística, pero abundará en
 cada parte que se trabaje aunque sea algo como la motivación para las
@@ -187,7 +189,7 @@ pero no sabes ni recuerdas la función exacta para esto, puedes buscar en
 los archivos por el término usando doble signo de interrogación
 (\texttt{??regression}).
 
-Hay mucha información adicional en internet. Es difícil buscar en google
+Hay mucha información adicional en internet. Es difícil buscar en Google
 por R, ya que es una letra, pero sí se puede encontrar mucho sobre
 funcionalidades. Para búsqueda más certera se puede ir a
 \href{http://stackoverflow.com/}{StackOverflow}, y buscar el tag de R
@@ -223,13 +225,17 @@ las primeras dos horas de esta secuencia podamos:
   Inicios de la visualización y análisis descriptivo.
 \end{enumerate}
 
-Durante las próximas semanas abundaremos en esta base, y profundizaremos
-el viernes 11 de octubre que viene en visualización avanzada con datos
-censales así como de otros acercamientos, usando herramientas de
-\texttt{ggplot2}. Finalmente, la tercera semana, del 18 de octubre,
-entraremos más en \emph{wrangling} de datos, así como en la inferencia
-estadística, con introducciones en R sobre modelos lineales, jerárquicos
-y longitudinales. Si bien hay mucho más que se puede hacer con R
+Durante las próximas cuatro semanas expandiremos sobre esta base, y
+profundizaremos el miércoles 12 de febrero en visualización avanzada,
+para datos transversales, series de tiempo, y datos censales así como de
+otros acercamientos, usando herramientas de \texttt{ggplot2} y
+\texttt{sf}. Luego, la tercera semana, del 19 de febrero, entraremos más
+en \emph{wrangling} de datos, así como en la inferencia estadística, con
+introducciones en R sobre modelos lineales, jerárquicos y
+longitudinales, así como de los distintos métodos de verificación de
+presunciones de modelo. Finalmente, en la cuarta semana, del 26 de
+febrero, trabajaremos en la medida de lo posible, con análisis o ciencia
+de redes. Si bien hay mucho más que se puede hacer con R
 (e.g.~\emph{machine learning,} extracción de datos de la web,
 procesamiento de cadenas y minería de textos, interacción con Git,
 trabajos en Unix, o nuevos desarrollos en Quarto), la idea es iniciar la
@@ -239,7 +245,7 @@ travesía en R, y señalar a dónde pueden buscar ahondar.
 RMarkdown)}\label{usando-rstudio-y-presentando-por-encima-rmarkdown}
 
 ¿Cómo difieren R y RStudio? RStudio es una interfaz que yace encima del
-programa base R. Es además \ul{\textbf{mucho}} más amigable y llevadero
+programa base R. Es además \ul{\textbf{mucho}} más amigable y llevadera
 que R.
 
 \begin{figure}
@@ -440,8 +446,8 @@ descriptivos. El código donde las cosas se llaman \texttt{id\_sujeto},
 \texttt{condición} o \texttt{edad} serán más largos que \texttt{x},
 \texttt{y} y \texttt{z}, pero tendrán \textbf{mucho} más sentido al
 volver a ellos meses después al hacer sus artículos o trabajos de
-investigación. Hay eso sí, ciertas reglas para nombres: pueden ser
-cualquier caracter alfanumérico, pero el primer caracter ha de ser una
+investigación. Hay, eso sí, ciertas reglas para nombres: pueden ser
+cualquier carácter alfanumérico, pero el primer carácter ha de ser una
 letra. No se permiten espacios: la computadora no entiende que quieres
 trabajar con dos palabras como si fuera un concepto; son dos términos
 separados. En ese caso considera unir palabras con \texttt{\_} y
@@ -497,7 +503,7 @@ Pueden comparar también valores numéricos con \textgreater, \textless,
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\DecValTok{3} \SpecialCharTok{!=} \DecValTok{4} \CommentTok{\#{-}\textgreater{} note: the sign "!=" means "not equal to"}
+\DecValTok{3} \SpecialCharTok{!=} \DecValTok{4} \CommentTok{\#{-}\textgreater{} noten: el símbolo complejo "!=" significa "no es igual a".}
 \end{Highlighting}
 \end{Shaded}
 
@@ -510,21 +516,23 @@ hacer cálculos:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\NormalTok{psic }\OtherTok{\textless{}{-}} \DecValTok{2}
-\NormalTok{soci }\OtherTok{\textless{}{-}} \DecValTok{3}
-\NormalTok{econ }\OtherTok{\textless{}{-}} \DecValTok{5}
-\NormalTok{cipo }\OtherTok{\textless{}{-}} \DecValTok{5}
-\NormalTok{antr }\OtherTok{\textless{}{-}} \DecValTok{3}
-\NormalTok{geog }\OtherTok{\textless{}{-}} \DecValTok{2}
-\NormalTok{otro }\OtherTok{\textless{}{-}} \DecValTok{4}
+\NormalTok{psic }\OtherTok{\textless{}{-}} \DecValTok{0}
+\NormalTok{soci }\OtherTok{\textless{}{-}} \DecValTok{0}
+\NormalTok{econ }\OtherTok{\textless{}{-}} \DecValTok{0}
+\NormalTok{cipo }\OtherTok{\textless{}{-}} \DecValTok{0}
+\NormalTok{antr }\OtherTok{\textless{}{-}} \DecValTok{0}
+\NormalTok{geog }\OtherTok{\textless{}{-}} \DecValTok{0}
+\NormalTok{otrocs }\OtherTok{\textless{}{-}} \DecValTok{0}
+\NormalTok{otrasf }\OtherTok{\textless{}{-}} \DecValTok{0}
 
-\NormalTok{taller\_n }\OtherTok{=}\NormalTok{ psic }\SpecialCharTok{+}\NormalTok{ soci }\SpecialCharTok{+}\NormalTok{ econ }\SpecialCharTok{+}\NormalTok{ cipo }\SpecialCharTok{+}\NormalTok{ antr }\SpecialCharTok{+}\NormalTok{ geog }\SpecialCharTok{+}\NormalTok{ otro }
+\NormalTok{taller\_n }\OtherTok{=}\NormalTok{ psic }\SpecialCharTok{+}\NormalTok{ soci }\SpecialCharTok{+}\NormalTok{ econ }\SpecialCharTok{+}\NormalTok{ cipo }\SpecialCharTok{+}\NormalTok{ antr }\SpecialCharTok{+}\NormalTok{ geog }\SpecialCharTok{+}\NormalTok{ otrocs }\SpecialCharTok{+}\NormalTok{ otrasf}
+
 \FunctionTok{print}\NormalTok{(}\FunctionTok{paste0}\NormalTok{(}\StringTok{"La cantidad de participantes en el taller hoy es "}\NormalTok{,taller\_n)) }\CommentTok{\# cantidad de participantes del taller}
 \end{Highlighting}
 \end{Shaded}
 
 \begin{verbatim}
-## [1] "La cantidad de participantes en el taller hoy es 24"
+## [1] "La cantidad de participantes en el taller hoy es 0"
 \end{verbatim}
 
 \subsection{Funciones}\label{funciones}
@@ -595,7 +603,7 @@ menos un vector, o algo similar a ello.
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\FunctionTok{cat}\NormalTok{(a) }\CommentTok{\#concatena e imprime, menos complejo que print al no dar line feeds a menos que se explicite fill=T como argumento}
+\FunctionTok{cat}\NormalTok{(a)}\CommentTok{\#, fill = T) \#concatena e imprime, menos complejo que print al no dar line feeds a menos que se explicite fill=T como argumento.}
 \end{Highlighting}
 \end{Shaded}
 
@@ -656,7 +664,7 @@ las tendencias halladas.
 ## v dplyr     1.1.4     v readr     2.1.5
 ## v forcats   1.0.0     v stringr   1.5.1
 ## v ggplot2   3.5.1     v tibble    3.2.1
-## v lubridate 1.9.3     v tidyr     1.3.1
+## v lubridate 1.9.4     v tidyr     1.3.1
 ## v purrr     1.0.2     
 ## -- Conflicts ------------------------------------------ tidyverse_conflicts() --
 ## x dplyr::filter() masks stats::filter()
@@ -918,18 +926,19 @@ entender algunas variables en específico. Podemos usar un código que
 permite acceder a la variable dentro de un objeto:
 \texttt{datos\$nombre\_var}--el conjunto de datos, un signo de peso o
 dólar, y el nombre de la variable. Por ejemplo, \texttt{d\$cyl} es
-decirle a R \textbf{``la variable \texttt{cyl} dentro del conjunto de
-datos \texttt{d}''}. Es importante en este punto especificar el conjunto
-que queremos acceder, pues tenemos varias opciones.
+decirle a R \textbf{``dentro del conjunto de datos \texttt{d}, la
+variable \texttt{cyl}''}. Es importante en este punto especificar el
+conjunto que queremos acceder, pues tenemos varias opciones.
 
-\subsubsection{Pegándonos de un conjunto de
-datos}\label{peguxe1ndonos-de-un-conjunto-de-datos}
+\subsubsection{Apegándonos de un conjunto de
+datos}\label{apeguxe1ndonos-de-un-conjunto-de-datos}
 
-Es posible que quieras trabajar con sólo uno o mayormente uno de estos
-conjuntos. Ahí podríamos usar la opción de \texttt{attach(datos)}
-mientras operas con esos datos, y luego \texttt{detach()} al terminar
-con ellos. En este caso, le decimos a R que asuma que al llamar la
-variable, nos referimos a los datos que `pegamos' a la memoria.
+Es posible que quieran trabajar con sólo uno o mayormente uno de estos
+conjuntos de datos. Ahí podríamos usar la opción de
+\texttt{attach(datos)} mientras operas con esos datos, y luego
+\texttt{detach()} al terminar con ellos. En este caso, le decimos a R
+que asuma que al llamar la variable, nos referimos a los datos que
+`pegamos' a la memoria.
 
 \emph{Si bien esto puede ser conveniente, podría llevar a ciertos
 errores por olvido o por cambios en los datos, debe ser usado sin mucha
@@ -1004,12 +1013,13 @@ variable de automático o manual \texttt{am}:
 
 \begin{Shaded}
 \begin{Highlighting}[]
-\CommentTok{\#sd(am) \#dará error: no se puede aplicar esto a categórico}
+\CommentTok{\#sd(am) \#dará error: no se puede aplicar esto a valores categóricos}
 \end{Highlighting}
 \end{Shaded}
 
-¡Asegúrense de `despegar' el conjunto de datos al terminar las
-operaciones que iban a usar!
+Si optaron por usar la función de \texttt{attach}, ¡asegúrense de
+`despegar' el conjunto de datos al terminar las operaciones que iban a
+usar!
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1021,9 +1031,8 @@ operaciones que iban a usar!
 variables}\label{verificando-las-variables}
 
 Ahora que podemos acceder a las variables, podemos explorarlas con
-varias funciones existentes en R y paquetes adicionales que podamos
-usar. También podríamos crear nuestras propias funciones. Abajo unas
-funciones
+varias funciones existentes en R y paquetes adicionales. También
+podríamos crear nuestras propias funciones. Abajo algunas:
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1126,12 +1135,12 @@ funciones
 \includegraphics{Taller-R-1_files/figure-latex/unnamed-chunk-6-3.pdf}
 
 Nota que para estas funciones lo que se \emph{requiere} en realidad es
-el nombre de la variable como argumento. ¿Qué creen hacen las opciones
-\texttt{col\ =}, \texttt{xlab\ =}, \texttt{main\ =}, and
-\texttt{ylab\ =} mean?
+el nombre de la variable como argumento. ¿Qué creen signifiquen las
+opciones \texttt{col\ =}, \texttt{xlab\ =}, \texttt{main\ =}, y
+\texttt{ylab\ =}?
 
 Podríamos también agrupar la información como ocurre en estos casos
-abajos del paquete \texttt{psych}.
+abajo del paquete \texttt{psych}.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -1139,10 +1148,6 @@ abajos del paquete \texttt{psych}.
 \FunctionTok{library}\NormalTok{(psych)}
 \end{Highlighting}
 \end{Shaded}
-
-\begin{verbatim}
-## Warning: package 'psych' was built under R version 4.3.3
-\end{verbatim}
 
 \begin{verbatim}
 ## 
@@ -1621,26 +1626,26 @@ Hoy aprendimos varias cosas para empezar a usar R:
 \begin{itemize}
 \tightlist
 \item
-  Hablamos sobre cómo descargar e instalar R y RStudio
+  Hablamos sobre cómo descargar e instalar R y RStudio;
 \item
-  Funcionalidades posibles, como Markdown
+  Funcionalidades posibles, como Markdown;
 \item
-  Funciones y jerga específica de R
+  Funciones y jerga específica de R;
 \item
-  Cómo cargar datos y visualizarlos
+  Cómo cargar datos y visualizarlos;
 \item
-  Cómo buscar estadísticas básicas
+  Cómo buscar estadísticas básicas;
 \item
-  Cómo llevar a cabo operaciones transformadoras a los datos
+  Cómo llevar a cabo operaciones transformadoras a los datos;
 \item
-  Empezamos a usar la sintaxis de tidyverse
+  Empezamos a usar la sintaxis de tidyverse.
 \end{itemize}
 
 \subsection{Continuamos el próximo
-viernes}\label{continuamos-el-pruxf3ximo-viernes}
+miércoles}\label{continuamos-el-pruxf3ximo-miuxe9rcoles}
 
 En los talleres que vienen continuaremos ahondando en operaciones
-estadísticas, visualización más avanzada, así como estadística
-inferencial. Gracias por asistir hoy.
+estadísticas, visualización más avanzada, estadística inferencial y
+análisis de redes. Gracias por asistir hoy.
 
 \end{document}

@@ -1,7 +1,7 @@
 ---
 title: 'CACCS: Secuencia de taller de RStudio -- Parte 1'
 author: "Rashid C.J. Marcano Rivera"
-date: "4 de oct.ᵉ de 2024"
+date: "5 de feb.º de 2025"
 output:
   pdf_document:
     latex_engine: xelatex
@@ -16,21 +16,21 @@ output:
 
 **Introducción a la computación estadística en R**
 
-Este taller está basado en notas de Paul Thibodeau y revisiones de profesores del departamento de psicología de BYU [(vea esa versión aquí)](https://fhssrsc.byu.edu/r-workshop). Adaptado al español y usando ejemplos del libro de Rafael Irizarry [disponible aquí](https://leanpub.com/dslibro).
+Este taller está basado en notas de Paul Thibodeau y revisiones de profesores del departamento de psicología de BYU [(vea esa versión aquí)](https://fhssrsc.byu.edu/r-workshop). Adaptado al español y usando ejemplos del libro de Rafael Irizarry [disponible aquí](https://leanpub.com/dslibro). Ha sido revisado de la primera versión de este taller, brindado en el Centro Académico de Cómputos de Ciencias Sociales en octubre de 2024.
 
-*Si aún no has instalado R, está [aquí](http://cran.us.r-project.org/). Acto seguido, [baja RStudio](https://posit.co/download/rstudio-desktop/). Puedes también ir a la nube [en Posit Cloud](https://posit.cloud/).*
+*Si aún no has instalado R, está disponible [aquí](http://cran.us.r-project.org/). Acto seguido, [baja RStudio](https://posit.co/download/rstudio-desktop/). Puedes también ir a la nube [en Posit Cloud](https://posit.cloud/).*
 
 # Sobre aprender R
 
 R es un lenguaje creado por estadísticos como ambiente interactivo para análisis de datos. En R pueden guardar su trabajo como una secuencia de comandos, conocida como un *script*, que se pueden ejecutar fácilmente en cualquier momento, con portabilidad. Estos *scripts* sirven como un registro del análisis que realizaron, una característica clave que facilita el trabajo [***reproducible***]{.underline}. Si bien es un programa poderoso y flexible, es ciertamente más complicado que programados como el que puedan encontrar en SPSS o STATA, donde pueden señalar con el ratón una opción y ejecutarla. Por otro lado, R es gratuito y de código abierto. En adición es modular y las funcionalidades añadidas complementariamente por terceros también son gratuitos, incluyendo acceso temprano a los métodos y herramientas más recientes que se desarrollan para una amplia variedad de disciplinas, incluyendo la economía, ciencias políticas, sociología, planificación, ecología, geografía o la biología molecular, entre otros.
 
-Mi idea tras esta secuencia de talleres sobre R es brindar una introducción para que puedan interactuar con R tal que los sentimientos de frustración o ansiedad que puedan surgir al interactuar con este lenguaje al usarlo en variedad de circunstancias. Este taller presume en general ciertos conocimientos básicos en estadística, pero abundará en cada parte que se trabaje aunque sea algo como la motivación para las funciones que ejecutaremos. So no tienen experiencia en programación computacional, es posible que partes de este taller resulten confusas o no tengan mucho sentido. Recomiendo que aún así traten de entender lo que puedan, y luego al volver a este taller periódicamente al repasar el contenido, vayan comprendiendo (o trayendo preguntas que no se resuelvan) el material.
+Mi idea tras esta secuencia de talleres sobre R es brindar una introducción para que puedan interactuar con R tal que los sentimientos de frustración o ansiedad que puedan surgir al trabajar con este lenguaje al usarlo en variedad de circunstancias. Este taller presume en general ciertos conocimientos básicos en estadística, pero abundará en cada parte que se trabaje aunque sea algo como la motivación para las funciones que ejecutaremos. So no tienen experiencia en programación computacional, es posible que partes de este taller resulten confusas o no tengan mucho sentido. Recomiendo que aún así traten de entender lo que puedan, y luego al volver a este taller periódicamente al repasar el contenido, vayan comprendiendo (o trayendo preguntas que no se resuelvan) el material.
 
 Es importante que sepan que la habilidad más útil de antemano es la de saber adónde ir cuando se atasquen. R ayuda bastante en esto. La consola de R, al escribir y ejecutar comandos, brinda retroalimentación inmediata. Hagan uso de esto de manera liberal mientras trabajan el taller, haciendo pequeñas modificaciones a los ejemplos que brinde, hasta que sientan que entienden qué está ocurriendo.
 
 De una vez, cabe señalar que la consola brinda acceso a la función de buscar ayuda interna. Casi todas las funciones (y muchos de los datos pre-almacenados) tienen archivos que les acompañan describiendo qué son las funciones, y cómo usarlas. Pueden acceder a esta información escribiendo `help(función)` (o `?función`), sustituyendo «función» por el nombre de la función que quieras conocer. Es importante leer estos archivos detenidamente la primera vez que te encuentres con una función, pero *también* (posiblemente más) importante es consultarlos con frecuencia. Si tienes una idea de qué quieres hacer, pero no sabes ni recuerdas la función exacta para esto, puedes buscar en los archivos por el término usando doble signo de interrogación (`??regression`).
 
-Hay mucha información adicional en internet. Es difícil buscar en google por R, ya que es una letra, pero sí se puede encontrar mucho sobre funcionalidades. Para búsqueda más certera se puede ir a [StackOverflow](http://stackoverflow.com/), y buscar el tag de R (`[R]`) junto a tu pregunta o error. Relacionado está el [StackExchange de estadísticas](http://stats.stackexchange.com/), que es como Stack Overflow pero enfocado en la madeja estadística.
+Hay mucha información adicional en internet. Es difícil buscar en Google por R, ya que es una letra, pero sí se puede encontrar mucho sobre funcionalidades. Para búsqueda más certera se puede ir a [StackOverflow](http://stackoverflow.com/), y buscar el tag de R (`[R]`) junto a tu pregunta o error. Relacionado está el [StackExchange de estadísticas](http://stats.stackexchange.com/), que es como Stack Overflow pero enfocado en la madeja estadística.
 
 Finalmente, antes de empezar, quiero hablar sobre errores. Tanto novatos como expertos encontrarán errores en su código de R. De suceder, al ir ejecutando un *script* o trabajo, cesará el proceso y saldrá impreso un mensaje de error en la consola. Esto puede ser frustrante, en especial al estar iniciando el aprendizaje, pues el error ocurre a menudo muy adentro de las especificidades de una función, y el mensaje de error no guarda relación con lo que el usuario quería hacer. Un error a evitar al empezar a aprender R es que el error es un disparate incomprensible, y resignarse a la frustración y desánimo. Resistan ese impulso; si bien el mensaje no será de inicio informativo, está diseñado para transmitir cierta información con claridad, y entender esa información es clave para resolver el problema (o cambiar de estrategias).
 
@@ -42,11 +42,11 @@ Esta es una secuencia de tres semanas, y en esta lección arrancaremos con lo b�
 
 3.  Inicios de la visualización y análisis descriptivo.
 
-Durante las próximas semanas abundaremos en esta base, y profundizaremos el viernes 11 de octubre que viene en visualización avanzada con datos censales así como de otros acercamientos, usando herramientas de `ggplot2`. Finalmente, la tercera semana, del 18 de octubre, entraremos más en *wrangling* de datos, así como en la inferencia estadística, con introducciones en R sobre modelos lineales, jerárquicos y longitudinales. Si bien hay mucho más que se puede hacer con R (e.g. *machine learning,* extracción de datos de la web, procesamiento de cadenas y minería de textos, interacción con Git, trabajos en Unix, o nuevos desarrollos en Quarto), la idea es iniciar la travesía en R, y señalar a dónde pueden buscar ahondar.
+Durante las próximas cuatro semanas expandiremos sobre esta base, y profundizaremos el miércoles 12 de febrero en visualización avanzada, para datos transversales, series de tiempo, y datos censales así como de otros acercamientos, usando herramientas de `ggplot2` y `sf`. Luego, la tercera semana, del 19 de febrero, entraremos más en *wrangling* de datos, así como en la inferencia estadística, con introducciones en R sobre modelos lineales, jerárquicos y longitudinales, así como de los distintos métodos de verificación de presunciones de modelo. Finalmente, en la cuarta semana, del 26 de febrero, trabajaremos en la medida de lo posible, con análisis o ciencia de redes. Si bien hay mucho más que se puede hacer con R (e.g. *machine learning,* extracción de datos de la web, procesamiento de cadenas y minería de textos, interacción con Git, trabajos en Unix, o nuevos desarrollos en Quarto), la idea es iniciar la travesía en R, y señalar a dónde pueden buscar ahondar.
 
 ## Usando RStudio (y presentando por encima, RMarkdown)
 
-¿Cómo difieren R y RStudio? RStudio es una interfaz que yace encima del programa base R. Es además [**mucho**]{.underline} más amigable y llevadero que R.
+¿Cómo difieren R y RStudio? RStudio es una interfaz que yace encima del programa base R. Es además [**mucho**]{.underline} más amigable y llevadera que R.
 
 ![Consola R: ejecuta comandos a la medida que se escriben.](R.png)
 
@@ -103,7 +103,7 @@ Vale señalar que no se debe confundir la asignación de valor a un objeto (o va
 2 == 3
 ```
 
-Está bien usar nombres de variables como `x` para ejemplos matemáticos simples como los anteriores. Sin embargo, cuando escribas código para realizar análisis, debes tener cuidado de usar nombres descriptivos. El código donde las cosas se llaman `id_sujeto`, `condición` o `edad` serán más largos que `x`, `y` y `z`, pero tendrán **mucho** más sentido al volver a ellos meses después al hacer sus artículos o trabajos de investigación. Hay eso sí, ciertas reglas para nombres: pueden ser cualquier caracter alfanumérico, pero el primer caracter ha de ser una letra. No se permiten espacios: la computadora no entiende que quieres trabajar con dos palabras como si fuera un concepto; son dos términos separados. En ese caso considera unir palabras con `_` y `.`. R también puede trabajar con datos categóricos, no sólo numéricos:
+Está bien usar nombres de variables como `x` para ejemplos matemáticos simples como los anteriores. Sin embargo, cuando escribas código para realizar análisis, debes tener cuidado de usar nombres descriptivos. El código donde las cosas se llaman `id_sujeto`, `condición` o `edad` serán más largos que `x`, `y` y `z`, pero tendrán **mucho** más sentido al volver a ellos meses después al hacer sus artículos o trabajos de investigación. Hay, eso sí, ciertas reglas para nombres: pueden ser cualquier carácter alfanumérico, pero el primer carácter ha de ser una letra. No se permiten espacios: la computadora no entiende que quieres trabajar con dos palabras como si fuera un concepto; son dos términos separados. En ese caso considera unir palabras con `_` y `.`. R también puede trabajar con datos categóricos, no sólo numéricos:
 
 ```{r asignando valores categóricos}
 y<-"Puerto Rico"
@@ -124,21 +124,23 @@ Pueden comparar también valores numéricos con \>, \<, !=, \<= y \>=, que devol
 ```{r}
 2 < 3
 3 <= 3
-3 != 4 #-> note: the sign "!=" means "not equal to"
+3 != 4 #-> noten: el símbolo complejo "!=" significa "no es igual a".
 ```
 
 Una vez hayan asignado valor numérico a objetos o variables, podrán hacer cálculos:
 
 ```{r}
-psic <- 2
-soci <- 3
-econ <- 5
-cipo <- 5
-antr <- 3
-geog <- 2
-otro <- 4
+psic <- 0
+soci <- 0
+econ <- 0
+cipo <- 0
+antr <- 0
+geog <- 0
+otrocs <- 0
+otrasf <- 0
 
-taller_n = psic + soci + econ + cipo + antr + geog + otro 
+taller_n = psic + soci + econ + cipo + antr + geog + otrocs + otrasf
+
 print(paste0("La cantidad de participantes en el taller hoy es ",taller_n)) # cantidad de participantes del taller
 ```
 
@@ -166,7 +168,7 @@ Normalmente usaremos `c()`, la función de concatenación. Esta toma una secuenc
 ```{r vectores básicos}
 a <- c(2, 5, 7)
 print(a)
-cat(a) #concatena e imprime, menos complejo que print al no dar line feeds a menos que se explicite fill=T como argumento
+cat(a)#, fill = T) #concatena e imprime, menos complejo que print al no dar line feeds a menos que se explicite fill=T como argumento.
 sum(a) #suma
 mean(a) #media
 sd(a) #desviación estándar
@@ -220,7 +222,6 @@ Recuerden que para datos pre-existentes en R o paquetes, pueden buscar más info
 help(mtcars)
 ```
 
-
 ## Tipos de datos
 
 Hay cuatro tipos de datos en R. Sabiendo de ellos podemos entender lsa limitaciones de análisis de cada uno, y también podrán entender mejor algunos errores que podrían recibir. Estos son:
@@ -245,11 +246,11 @@ En estos datos `am` nos informa si el vehículo usa transmisión automática (0)
 
 ## El operador de accesso `$`
 
-A menudo queremos no entender todos los datos (pueden ser muchos) sino entender algunas variables en específico. Podemos usar un código que permite acceder a la variable dentro de un objeto: `datos$nombre_var`--el conjunto de datos, un signo de peso o dólar, y el nombre de la variable. Por ejemplo, `d$cyl` es decirle a R **"la variable `cyl` dentro del conjunto de datos `d`"**. Es importante en este punto especificar el conjunto que queremos acceder, pues tenemos varias opciones.
+A menudo queremos no entender todos los datos (pueden ser muchos) sino entender algunas variables en específico. Podemos usar un código que permite acceder a la variable dentro de un objeto: `datos$nombre_var`--el conjunto de datos, un signo de peso o dólar, y el nombre de la variable. Por ejemplo, `d$cyl` es decirle a R **"dentro del conjunto de datos `d`, la variable `cyl`"**. Es importante en este punto especificar el conjunto que queremos acceder, pues tenemos varias opciones.
 
-### Pegándonos de un conjunto de datos
+### Apegándonos de un conjunto de datos
 
-Es posible que quieras trabajar con sólo uno o mayormente uno de estos conjuntos. Ahí podríamos usar la opción de `attach(datos)` mientras operas con esos datos, y luego `detach()` al terminar con ellos. En este caso, le decimos a R que asuma que al llamar la variable, nos referimos a los datos que 'pegamos' a la memoria.
+Es posible que quieran trabajar con sólo uno o mayormente uno de estos conjuntos de datos. Ahí podríamos usar la opción de `attach(datos)` mientras operas con esos datos, y luego `detach()` al terminar con ellos. En este caso, le decimos a R que asuma que al llamar la variable, nos referimos a los datos que 'pegamos' a la memoria.
 
 *Si bien esto puede ser conveniente, podría llevar a ciertos errores por olvido o por cambios en los datos, debe ser usado sin mucha frecuencia.*
 
@@ -265,10 +266,10 @@ sd(am)
 range(am)
 am <- as.factor(am)
 str(am)
-#sd(am) #dará error: no se puede aplicar esto a categórico
+#sd(am) #dará error: no se puede aplicar esto a valores categóricos
 ```
 
-¡Asegúrense de 'despegar' el conjunto de datos al terminar las operaciones que iban a usar!
+Si optaron por usar la función de `attach`, ¡asegúrense de 'despegar' el conjunto de datos al terminar las operaciones que iban a usar!
 
 ```{r despegando el df}
 detach(d)
@@ -276,7 +277,7 @@ detach(d)
 
 ### Verificando las variables
 
-Ahora que podemos acceder a las variables, podemos explorarlas con varias funciones existentes en R y paquetes adicionales que podamos usar. También podríamos crear nuestras propias funciones. Abajo unas funciones
+Ahora que podemos acceder a las variables, podemos explorarlas con varias funciones existentes en R y paquetes adicionales. También podríamos crear nuestras propias funciones. Abajo algunas:
 
 ```{r}
 tapply(d$mpg, d$gear, mean) #aplica la función de promedio a la variable de mpg para verlos según la cantidad de cambios--3, 4 o 5
@@ -294,9 +295,9 @@ boxplot(d$wt, ylab = 'Peso (en miles)')
 plot(d$wt~d$mpg,xlab="Millas por galón",ylab='Peso (en miles)')
 ```
 
-Nota que para estas funciones lo que se *requiere* en realidad es el nombre de la variable como argumento. ¿Qué creen hacen las opciones `col =`, `xlab =`, `main =`, and `ylab =` mean?
+Nota que para estas funciones lo que se *requiere* en realidad es el nombre de la variable como argumento. ¿Qué creen signifiquen las opciones `col =`, `xlab =`, `main =`, y `ylab =`?
 
-Podríamos también agrupar la información como ocurre en estos casos abajos del paquete `psych`.
+Podríamos también agrupar la información como ocurre en estos casos abajo del paquete `psych`.
 
 ```{r psych, paquete que añade más descripción}
 #install.packages("psych")
@@ -310,7 +311,9 @@ Una forma más complicada pero útil de verificar estadísticas es la función `
 ```{r}
 xtabs(mpg ~ cyl + am, data = d)
 ```
+
 Si queríamos el promedio de millas por galón por categoría hacemos lo siguiente:
+
 ```{r}
 # Sumamos mpg por categorías de cyl y am
 suma_mpg <- xtabs(mpg ~ cyl + am, data = d)
@@ -323,6 +326,7 @@ media_mpg <- suma_mpg / cantidad
 
 media_mpg
 ```
+
 En este caso hemos obtenido la media de millas por galón según la cantidad de cilindros del vehículo, y si la transmisión era manual o automática.
 
 # Entendiendo y manipulando datos: Tidyverse
@@ -431,14 +435,14 @@ murders %>%
 
 Hoy aprendimos varias cosas para empezar a usar R:
 
--   Hablamos sobre cómo descargar e instalar R y RStudio
--   Funcionalidades posibles, como Markdown
--   Funciones y jerga específica de R
--   Cómo cargar datos y visualizarlos
--   Cómo buscar estadísticas básicas
--   Cómo llevar a cabo operaciones transformadoras a los datos
--   Empezamos a usar la sintaxis de tidyverse
+-   Hablamos sobre cómo descargar e instalar R y RStudio;
+-   Funcionalidades posibles, como Markdown;
+-   Funciones y jerga específica de R;
+-   Cómo cargar datos y visualizarlos;
+-   Cómo buscar estadísticas básicas;
+-   Cómo llevar a cabo operaciones transformadoras a los datos;
+-   Empezamos a usar la sintaxis de tidyverse.
 
-## Continuamos el próximo viernes
+## Continuamos el próximo miércoles
 
-En los talleres que vienen continuaremos ahondando en operaciones estadísticas, visualización más avanzada, así como estadística inferencial. Gracias por asistir hoy.
+En los talleres que vienen continuaremos ahondando en operaciones estadísticas, visualización más avanzada, estadística inferencial y análisis de redes. Gracias por asistir hoy.
