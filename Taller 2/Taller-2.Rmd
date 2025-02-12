@@ -51,7 +51,7 @@ Vivimos en una era de creciente disponibilidad de conjuntos de datos informativo
 
 En R, una de las principales maneras con la que trabajaremos estos análisis visuales es de la mano de `ggplot2`, así como con otros paquetes que ayudan a procesar esta información. Si bien existen otros métodos de graficar en R y otros programas, la preferencia de este taller es utilizar el sistema de procesamiento que ofrece `tidyverse`, con `ggplot2` incluido.
 
-Esta es una secuencia de tres semanas, y en esta lección continuamos con lo aprendido la semana anterior, donde terminamos con visualizaciones sencillas y con el uso de `tidyverse` para manejar datos. Tenemos la meta hoy de que al culminar las segundas dos horas de esta secuencia podamos:
+Esta es una secuencia de cuatro semanas, y en esta lección continuamos con lo aprendido la semana anterior, donde terminamos con visualizaciones sencillas y con el uso de `tidyverse` para manejar datos. Tenemos la meta hoy de que al culminar las segundas dos horas de esta secuencia podamos:
 
 1.  Entender cómo usar la gramática de gráficas
 
@@ -59,13 +59,13 @@ Esta es una secuencia de tres semanas, y en esta lección continuamos con lo apr
 
 3.  Entender cómo utilizar en varias maneras `tidycensus` para generar mapas.
 
-La próxima sesión, del 18 de octubre, entraremos más en *wrangling* de datos, así como en la inferencia estadística, con introducciones en R sobre modelos lineales, jerárquicos y longitudinales.
+En la próxima sesión, del 19 de febrero, entraremos más en *wrangling* de datos, así como en la inferencia estadística, con introducciones en R sobre modelos lineales, jerárquicos y longitudinales, así como sus diagnósticos posteriores. En la última sesión, pautada para el 26 de este mes, evaluaremos análisis de redes, y de ser posible, otros métodos de análisis textual.
 
 # ggplot2
 
 R ofrece varias opciones para graficar, siendo útiles las capacidades incluidas en su instalación básica. Además, existen paquetes como `grid`, que permite un control preciso de los elementos gráficos, y `lattice`, que facilita la creación de gráficos multivariados y en paneles o facetas. Sin embargo, en este taller (y en los libros de referencia usados y descritos arriba) se ha optado por usar `ggplot2`, ya que permite a los principiantes crear gráficos complejos y estéticos mediante una sintaxis intuitiva y fácil de recordar, dividiendo los gráficos en componentes básicos.
 
-`ggplot2` destaca por su uso de una [*g*]{.underline}*ramática de [g]{.underline}ráficos* – de donde vienen las primeras dos g – que simplifica el proceso de creación de gráficos. Al aprender unos pocos componentes esenciales de esta gramática, los usuarios pueden generar una amplia variedad de gráficos con facilidad. Además, su comportamiento por defecto está diseñado para producir resultados agradables y funcionales con código conciso y legible, lo que facilita su uso por principiantes. Como factor limitante está el que está diseñado para trabajar con tablas de formato *tidy* (con filas con observaciones y columnas conteniendo variables), pero un número sustancial de conjuntos de datos se trabajan en ese formato, o pueden convertirse como tal.
+`ggplot2` destaca por su uso de una [*g*]{.underline}*ramática de [g]{.underline}ráficos* – de donde vienen las primeras dos g – que simplifica el proceso de creación de gráficos. Al aprender unos pocos componentes esenciales de esta gramática, los usuarios pueden generar una amplia variedad de gráficos con facilidad. Además, su comportamiento por defecto está diseñado para producir resultados agradables y funcionales con código conciso y legible, lo que facilita su uso por principiantes. Como factor limitante está el que está diseñado para trabajar con tablas de formato *tidy* (con filas con observaciones y columnas conteniendo variables), pero un número sustancial de conjuntos de datos se trabajan en ese formato, o pueden convertirse a ese formato.
 
 ## Componentes de un gráfico
 
@@ -77,14 +77,14 @@ Hoy construiremos varios tipos de gráficos como los que vimos arriba, así como
     -   Estoy pasando al gráfico un conjunto de datos que corté sobre fatalidad de casos de COVID-19 hasta el 31 de julio de 2020 (los datos continúan hasta 2023).
     -   Este es el componente de *datos* del gráfico.
 -   **Geometrías**:
-    -   El gráfico es uno de líneas, útil para varias series de tiempo. Este componente es una geometría. Otras geometrías posibles son gráficos de dispersión, histogramas, diagramas de barras, densidades suavizadas, y diagrama de cajas, entre otros.
+    -   El gráfico es uno de líneas, útil para varias series de tiempo. Este componente es una *geometría*. Otras geometrías posibles son gráficos de dispersión, histogramas, diagramas de barras, densidades suavizadas, y diagrama de cajas, entre otros.
 -   **Mapeo estético**:
     -   El gráfico usa señales visuales para representar en el lienzo vacío con capas distintos tipos de información provista en el conjunto de datos:
         -   Posiciones en el eje de x (tiempo)
         -   Posiciones en el eje de y (tasas de mortandad observadas)
         -   Color (asignado por país)
     -   Cada línea representa la información de un país para una serie de fechas. Estos se aclaran con una etiqueta para aclararnos esa relación de línea-color-país.
-    -   El mapeo estético depende de la geometría utilizada.
+    -   El *mapeo estético* depende de la geometría utilizada.
 -   **Observaciones adicionales**:\
     -   Ejes *x* e *y* definidos por el rango de los datos y ambos en escalas logarítmicas.
     -   El gráfico incluye etiquetas, un título, etiquetas de variables, nota al calce, y el tema utilizado es uno solarizado que pareciera no muy distante al utilizado por el periódico especializado "The Financial Times".
@@ -98,18 +98,19 @@ Manteniéndonos cerca de los datos utilizados en la semana pasada, construiremos
 murders |> ggplot()
 ```
 
-El primer paso de crear un gráfico de ggplot es asignar los datos a un lienzo vacío. Esto no significa poblar el lienzo con esos datos, sino pasarle al programa la información inicial, como un pintor que selecciona el tema que usará para la pintura que visualiza en su mente. Esto lo hicimos al pasar el *pipe* (`|>` o `%>%`) los datos a ggplot, y lo que ocurrió fue que al no darle más información (capas, como la pintura en un lienzo), nos quedó un recuadro gris enmarcado por un borde blanco.
+El primer paso de crear un gráfico de ggplot es asignar los datos a un lienzo vacío. Esto no significa poblar el lienzo con esos datos, sino pasarle al programa la información inicial, como un pintor que selecciona el tema que usará para la pintura que visualiza en su mente. Esto lo hicimos al pasar el *pipe* (`|>` o `|>`) los datos a ggplot, y lo que ocurrió fue que al no darle más información (capas, como la pintura en un lienzo), nos quedó un recuadro gris enmarcado por un borde blanco.
 
 En ggplot, la información entonces se suministra al lienzo por capas, y se le pueden añadir adicionales. Esto tomará la forma de código siguiente:
 
-| DATOS \|\> ggplot() + CAPA 1 + CAPA 2 + ... + CAPA N
+| DATOS \|\> ggplot() + CAPA 1 + 
+| CAPA 2 + ... + CAPA N
 
 Usualmente, la primera capa que añadimos define la geometría. Si queremos hacer un diagrama de dispersión, ¿qué geometría deberíamos utilizar?
 
 Si vemos la hoja de referencia (en la carpeta del taller 2, o accesible en esta página: <https://github.com/rstudio/cheatsheets/blob/main/data-visualization.pdf>), vemos que la función utilizada para crear gráficos con esta geometría puntillista es `geom_point`.
 
 ```{r Añadiendo una geometría}
-murders %>%
+murders |>
   ggplot() +
   geom_point(aes(x = population/10^6, y = total))
 
@@ -120,7 +121,7 @@ En este caso ya hemos dado un paso adicional y añadido una primera capa en esta
 Noten que hasta ahora hemos trabajado este lienzo sin guardarlo como objeto. Si bien esto puede funcionar bien, es posible que queramos guardar nuestro progreso y seguir añadiendo capas adicionales. En este caso, al ejecutar el comando y guardarlo en objeto, el programa no nos dará automáticamente una actualización del gráfico; tendremos que llamar al objeto para que aparezca:
 
 ```{r}
-p<-murders %>%
+p<-murders |>
   ggplot() +
   geom_point(aes(x = population/10^6, y = total),size=2)
 
@@ -148,7 +149,7 @@ Ahora podremos seguir con una complicación en el mapeo estético: queremos aña
 
 ```{r Añadiendo color}
 # Crear el gráfico base con puntos coloreados por región
-p <- murders %>%
+p <- murders |>
   ggplot() +
   geom_point(aes(x = population/10^6, y = total, colour = region), size = 2)
 
@@ -181,7 +182,7 @@ p+labs(
 Hasta ahora hemos ido añadiendo capas pero notamos que tenemos una gran concentración de puntos en la parte inferior izquierda del lienzo: la mayoría de las jurisdicciones tienen menos de 10 millones de habitantes y menos de 400 homicidios. Esto hace leer e interpretar lo que sucede en para estos casos difícil. Podríamos entonces representar el gráfico con una transformación logarítmica al re-escalar con `scale_x_continuous` y `scale_y_continuous`:
 
 ```{r Haciendo una transformación de escala}
-p2<-murders %>%
+p2<-murders |>
   ggplot() +
   geom_point(aes(x = population/10^6, y = total, colour = region), size = 3)
 p2<- p2 + geom_text(aes(x = population/10^6, y = total, label = abb),nudge_x = 0.05)
@@ -223,7 +224,7 @@ murders |>
     region == "Northeast" ~ "Noreste",
     region == "North Central" ~ "el Midwest",
     region == "West" ~ "Oeste",
-    region == "South" ~ "el Sur"))%>%
+    region == "South" ~ "el Sur"))|>
   ggplot(aes(population/10^6, total)) +   
   geom_abline(intercept = log10(t), lty = 2, color = "darkgrey") +
   geom_point(aes(col = región), size = 3) +
@@ -246,7 +247,7 @@ Si bien esto ha sido útil y han podido ver cómo generar gráficas complejas si
 Por ejemplo, aquí modifiqué los grupos de jurisdicciones de Estados Unidos a unos grupos específicos, y creo un gráfico para ver densidades con relleno (`fill=grupo`) y con líneas que también sirven para demarcar estos grupos de manera distinta (e.g. línea sólida, línea entrecortada). Noten que ha corrido todo el gráfico de la última línea.
 
 ```{r Un qplot inicial}
-murdersg<-murders %>%
+murdersg<-murders |>
   mutate(tasa= total/population *10^5,
     ,grupo = case_when(
     abb %in% c("ME", "NH", "VT", "MA", "RI", "CT") ~ "Nueva Inglaterra",
@@ -272,8 +273,8 @@ qplot(height, data = heights, geom = "density", color = sex, linetype = sex)
 Nuevamente podríamos mostrar información adicional, como medias añadidas fuera de las estéticas definidas dentro del mapeo:
 
 ```{r Dando a densidades transparencias}
-mu_alt<-heights %>%
-  group_by(sex) %>%
+mu_alt<-heights |>
+  group_by(sex) |>
   summarise(media=mean(height))
 
 c<-heights|>ggplot(aes(x = height))
@@ -454,24 +455,24 @@ library(coronavirus)
 library(scales)
 coronavirus<-coronavirus
 the_caption = "Fuente: OMS y varios via la Universidad John Hopkins y el paquete de R 'coronavirus' de Rami Krispin.\nAnálisis de Rashid C.J. Marcano Rivera, modificando código provisto por http://freerangestats.info (Peter Ellis)"
-top_countries <- coronavirus %>%
-  filter(date <= as.Date("2020-07-31")) %>%
-  filter(type == "confirmed") %>%
-  group_by(country) %>%
-  summarise(cases = sum(cases)) %>%
+top_countries <- coronavirus |>
+  filter(date <= as.Date("2020-07-31")) |>
+  filter(type == "confirmed") |>
+  group_by(country) |>
+  summarise(cases = sum(cases)) |>
   top_n(10, wt = cases)
 
-d2 <- coronavirus %>%
-  filter(date <= as.Date("2020-07-31")) %>%  # Filtro para datos dentro de 2020
-  group_by(date, country, type) %>%
-  summarise(cases = sum(cases)) %>%
-  group_by(date, country) %>%
-  spread(type, cases) %>%
-  arrange(date) %>%
-  group_by(country) %>%
-  mutate(cfr_cumulative = cumsum(death) / cumsum(confirmed)) %>%
-  filter(!is.na(cfr_cumulative)) %>%
-  ungroup() %>%
+d2 <- coronavirus |>
+  filter(date <= as.Date("2020-07-31")) |>  # Filtro para datos dentro de 2020
+  group_by(date, country, type) |>
+  summarise(cases = sum(cases)) |>
+  group_by(date, country) |>
+  spread(type, cases) |>
+  arrange(date) |>
+  group_by(country) |>
+  mutate(cfr_cumulative = cumsum(death) / cumsum(confirmed)) |>
+  filter(!is.na(cfr_cumulative)) |>
+  ungroup() |>
   inner_join(top_countries, by = "country") 
 
 summary(as.factor(d2$country))
@@ -484,19 +485,19 @@ top_countries
 Vemos que los países están en inglés pero queremos que aparezcan en nuestro gráfico en español (ya que interesa informar en mi caso a un público hispanófono). Podemos modificar la información con los paquetes de `tidyverse`:
 
 ```{r Modificando la información }
-d2<- d2 %>%
+d2<- d2 |>
   mutate(country=recode(country, US = "EEUU", Russia ="Rusia", Mexico = "México", Brazil = "Brasil", 
                         "United Kingdom" = "Reino Unido", Japan="Japón",
                         Italy = "Italia", Iran = "Irán", Peru = "Perú",
                         "South Africa"= "Sudáfrica"))
-d2<- d2 %>%
+d2<- d2 |>
   mutate(cfr_cumulativeperc=round(cfr_cumulative*100,2))
 ```
 
 Finalmente, expresamos el gráfico buscado. Paso los datos de mapeo estético como opciones globales y le añado las capas: líneas para series de tiempo, etiquetas automáticamente posicionadas (pero editadas para especificar dónde las quiero y añadir información adicional), transformaciones numéricas, información adicional de selección colores, una extensión del marco para acomodar las etiquetas, así como los títulos que deseara utilizar:
 
 ```{r Creando la visualización}
-d2 %>%
+d2 |>
   ggplot(aes(x = date, y = cfr_cumulative, colour = country)) +
   geom_line() +
   geom_label_repel(data = filter(d2, date == max(date)), aes(label = paste("",country,"-",cfr_cumulativeperc,"%")), 
@@ -530,7 +531,7 @@ library(tidyverse)
 library(tidycensus)
 library(sf)
 #census_api_key(INSERTE SU LLAVE DEL CENSO AQUÍ)
- #Rashid's
+
 
 options(scipen=999)
 options(tigris_class = "sf")
@@ -566,10 +567,10 @@ prmedian_2018 <- get_acs(geography = "state legislative district (lower chamber)
                     state = "PR", 
                     year = 2018)
 head(prmedian_2018)
-pr_median_combined <- prmedian_2019 %>%
-  mutate(year = 2019) %>%
+pr_median_combined <- prmedian_2019 |>
+  mutate(year = 2019) |>
   bind_rows(
-    prmedian_2018 %>% mutate(year = 2018)
+    prmedian_2018 |> mutate(year = 2018)
   )
 head(pr_median_combined)
 ```
@@ -579,7 +580,7 @@ Habiendo obtenido las tablas, digamos que no quiero hacer sólo un análisis num
 Pero al visualizar, podemos mejorar algo la velocidad en lo que entendemos algo más de lo que está ante nos.
 
 ```{r Ingresos por distrito, cambios en encuestas}
-pr_median_combined <- pr_median_combined %>%
+pr_median_combined <- pr_median_combined |>
   filter(!is.na(estimate))  # Filter out rows where the estimate is NA
 
 pr_median_combined|>
@@ -604,11 +605,11 @@ pr_median_combined|>
 Noten que ordenó los distritos de una manera extraña: el 4 aparece antes de 40 y todos del 5 al 9 se fueron como posteriores al 40. Voy a corregir y renombrar los distritos:
 
 ```{r Haciendo cambios a nombres de distritos}
-pr_median_combined <- pr_median_combined %>%
+pr_median_combined <- pr_median_combined |>
   # Extraer el número del distrito desde el nombre original y convertirlo en numérico
-  mutate(district_number = as.numeric(gsub(".*District ([0-9]+).*", "\\1", NAME))) %>%
+  mutate(district_number = as.numeric(gsub(".*District ([0-9]+).*", "\\1", NAME))) |>
   # Renombrar el campo NAME para que tenga el formato "Distrito 01" hasta "Distrito 40"
-  mutate(NAME = sprintf("Distrito %02d", district_number)) %>%
+  mutate(NAME = sprintf("Distrito %02d", district_number)) |>
   # Ordenar los datos según el número de distrito
   arrange(district_number)
 
@@ -639,7 +640,7 @@ library(tigris)
 
 pr_legislative_districts <- state_legislative_districts(state = "PR", house = "lower", year = 2018)
 pr_legislative_districts <- st_transform(pr_legislative_districts, crs = "EPSG:4326")  # ajustar proyección tal cual necesario
-pr_median_2018_geo <- pr_legislative_districts %>%
+pr_median_2018_geo <- pr_legislative_districts |>
   left_join(prmedian_2018, by = c("GEOID" = "GEOID"))  
 pr_median_2018_geo|>
   ggplot() +
@@ -679,7 +680,7 @@ pr_unidad_shp_filename <- paste(folder, "PR2020Shp/PR2020TV.shp", sep= "")
 pr_unidades <- st_read(pr_unidad_shp_filename, options = "ENCODING=latin1")
 st_set_crs(pr_unidades, "EPSG:4326")
 
-pr_unidades <- pr_unidades %>% st_transform(crs = "EPSG:3920")
+pr_unidades <- pr_unidades |> st_transform(crs = "EPSG:3920")
 plot(pr_unidades)
 
 ```
@@ -694,7 +695,7 @@ pr_population <- get_decennial(
 )
 
 pr_population <- st_transform(pr_population, crs = "EPSG:3920")
-pr_unidades <- pr_unidades %>%
+pr_unidades <- pr_unidades |>
   st_join(pr_population, by = c("GEOID" = "GEOID"))  # Asumiendo que comparten GEOID en común
 pr_unidades|>ggplot() +
   geom_sf(aes(fill = value)) +  # `value` is the population count
