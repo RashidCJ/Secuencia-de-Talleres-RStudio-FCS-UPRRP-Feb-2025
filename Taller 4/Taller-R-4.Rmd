@@ -1,0 +1,638 @@
+---
+title: 'CACCS: Secuencia de taller de RStudio -- Parte 3'
+author: "Rashid C.J. Marcano Rivera"
+date: "27 de feb.º de 2025"
+output:
+  html_document:
+    theme: cerulean
+    toc: TRUE
+    toc_float: TRUE
+    number_sections: TRUE
+editor_options: 
+  markdown: 
+    wrap: 90
+---
+
+**Análisis de redes**
+
+Este taller está basado en elementos y ejemplos de la presentación *Introduction to
+`statnet` (and `igraph`) for Social Network Analysis* de Patrick Kaminski (Doctorando de
+Sociología y Computación IU-Bloomington) y Ann McCrannie (Instituto de Ciencias de Redes
+de IU), las viñetas de `igraph` y `statnet`, así como datos de mi disertación doctoral
+para análisis descriptivo adicional así como inferencial, y de un artículo que estoy en
+proceso de concluir para visualización.
+
+Las metas de este último taller de la secuencia de talleres son:
+
+-   Introducir varios conceptos básicos del análisis de redes (con una comprensión
+    intuitiva y recursos para leer más).
+
+-   Mostrar cómo importar, gestionar y realizar análisis básicos de redes en R.
+
+-   Hablaremos principalmente desde la tradición del **análisis de redes sociales** (SNA),
+    pero también haremos referencia a algunos términos y herramientas comunes en la
+    **ciencia de redes**.
+
+*Si aún no has instalado R, está [aquí](http://cran.us.r-project.org/). Acto seguido,
+[baja RStudio](https://posit.co/download/rstudio-desktop/). Puedes también ir a la nube
+[en Posit Cloud](https://posit.cloud/).*
+
+# Hacia otro mundo
+
+Durante las tres semanas anteriores examinamos cómo se podía trabajar en R para varios
+fines estadísticos y de visualización. Esto incluía el uso de herramientas censales, de
+manejo y manipulación de datos, así como técnicas de modelaje inferencial. Este cuarto
+taller es bastante distinto a los pasados dos, y a la vez, manejará el uso de técnicas
+descriptivas, inferenciales y de visualización, aplicados en específico a redes, todo en
+uno.
+
+El análisis de redes sociales es una forma de conceptualizar, describir y modelar la
+sociedad como conjuntos de personas o grupos interconectados mediante relaciones
+específicas, ya sean estas tan tangibles como las redes de intercambio o tan intangibles
+como las percepciones mutuas. Los analistas de redes creen que la forma en que vive un
+individuo depende en gran parte de cómo está conectado a la red más amplia de relaciones
+sociales. Enfocarse en las redes nos ayuda a entender, por ejemplo, las actividades de las
+élites económicas, cómo las personas consiguen empleo, cómo los jurados alcanzan un
+consenso, cómo los países organizan su comercio, el fenómeno del “mundo pequeño” y la
+estructura de Internet.
+
+## Teoría de grafos
+
+Al representar cada persona, usuario, concepto o entidad de interés como un punto, que
+llamaremos **nodo** o **vértice** (*node* o *vertex* en inglés), y cada conexión como una
+línea que llamaremos **arista** o **enlaces** (*edges* o *links* en inglés), podemos
+empezar a visualizar quién se conecta a quién y cómo interactúan en esa red. Un grafo
+(*graph*) es una estructura matemática que permite representar problemas cotidianos de
+manera gráfica. En ello se puede representar un tipo de relación, o múltiples. La teoría
+de grafos, igual que la estadística o ciencias de cómputos, es una rama de las
+matemáticas, y se fundamenta en ellas.
+
+Formalmente un grafo $G=(V,E)$ es una pareja ordenada en la que $V$ es un conjunto no
+vacío de vértices y $E$ es un conjunto de aristas, donde $E$ consta de pares no ordenados
+de vértices, tales como $\{x,y\}\in E$, y entonces se dice que $x$ e $y$ son adyacentes.
+La arista no dirigida se representa en un grafo mediante un segmento de recta que une a
+dichos vértices y si fuere dirigida se le llama dígrafo denotado $D=(V,E)$ con flecha de
+$x$ a $y$. Ahí el par $(x,y)$ es un par ordenado y la arista dirigida se denota como
+$(x,y)\in E$.
+
+El grafo social o sociograma es entonces una representación de una red social sustentada
+en la teoría de grafos. Hay varios tipos (simple, múltiple, hipergrafos, etc.) Las aristas
+pueden ser adyacentes si convergieren en el mismo vértice, paralelas si los vértices
+inciales y finales fueren el mismo o cíclicas si parten del vértice para ir al mismo
+punto. Finalmente, se le llama camino al conjunto de vértices que están interconectados
+por aristas.
+
+Los paquetes que usaremos en este taller son los siguientes:
+
+```{r, Sección}
+#install.packages(c("network", "sna", "igraph", "tidygraph", "ggraph", "intergraph", "remotes"))
+```
+
+# Redes con R: igraph, statnet, network y tidy
+
+Se pueden crear en igraph gráficos básicos de varias maneras, primero trabajaremos con
+`make_graph()`.
+
+```{r, igraph básico}
+library(igraph)
+make_graph( c(1,2, 2,3, 3,4), directed=FALSE)
+```
+
+Esto nos indica que creó un grafo no dirigido (`--` es no dirigido, `--+` es dirigido). En
+adición, se puede indicar una red con instrucciones como el `:`, refiriendo un nodo a un
+conjunto de nodos: `Ross -- Chandler:Joey:Rachel:Phoebe:Monica` debiera crear el conector
+de todos estos amigos.
+
+```{r}
+g <- make_graph(~ 1 - 2, 2 - 3)
+g
+g1 <- make_graph(~ A - B, B - C:D:E)
+g1
+g2 <- make_graph(~ A --+ B, B +-- C, A --+ D:E, B --+ A)
+g2
+
+#quiero una red entre Ross, Chandler, Joey, Rachel., Phoebe y Mónica
+g3 <- make_graph(~ Ross --+ Chandler:Joey:Rachel:Phoebe:Monica, Chandler --+ Ross:Joey:Rachel:Phoebe:Monica, Joey --+ Ross:Chandler:Rachel:Phoebe:Monica, Rachel --+ Ross:Chandler:Joey:Phoebe:Monica, Phoebe --+ Ross:Chandler:Joey:Rachel:Monica, Monica --+ Ross:Chandler:Joey:Rachel:Phoebe)
+g3
+```
+
+Noten que cada grafo creado tiene su nombre en objeto, y que igraph al crearlo resume lo
+que hay en el objeto:
+
+-   La primera línea dice la clase del objeto `IGRAPH`. A este se le asigna un
+    identificador, y se le indica si es dirigido o no (`U` o `D`).
+
+-   Adicionalmente otras letras acompañan simbólicamente si aplica.
+
+    -   `N` es si los nodos tienen nombres,
+
+    -   `W` si tiene pesos (ninguno aquí lo tiene pero luego lo trabajaremos) o
+
+    -   `B` si es un bigrafo o bipartito.
+
+-   Luego, se indica el número de nodos y aristas, y finalmente se indica la presencia de
+    atributos con formato `nombredeatributo(ñ/ç)`, donde
+
+    -   `ñ` informará si es un atributo de nodo, arista o del grafo y
+
+    -   `ç` informa si es
+
+        -   `n`umérico,
+
+        -   `c`aracter,
+
+        -   e`x`tendido o
+
+        -   `l`ógico.
+
+    -   Finalmente en `+edges:` se indica la lista de aristas, quizás cortándose si se
+        extendiera mucho en grafos grandes.
+
+Otras funciones de `igraph` para importar o crear grafos, o viceversa, llevar un grafo a
+un objeto de tipo normal para `R` son usados dependiendo la estructura o arquitectura de
+los datos:
+
+| objeto                         | objeto a `igraph`             | `igraph` a objeto     |
+|--------------------------------|-------------------------------|-----------------------|
+| matriz de adyacencia           | `graph_from_adjacency_matrix` | `as_adjacency_matrix` |
+| lista de aristas               | `graph_from_edgelist`         | `as_edgelist`         |
+| `data.frame`s (marco de datos) | `graph_from_data_frame`       | `as_data_frame`       |
+
+## Importando datos de ejemplo 1
+
+```{r Seteando directorio de trabajo}
+#setwd("~/dirección/a/carpeta/donde/trabajan/el/Taller 4")
+getwd() #ver dónde está la carpeta
+list.files() #ver qué hay en la carpeta
+```
+
+Aquí hay los siguientes objetos:
+
+-   `classroom-adjacency.csv` con la matriz de adyacencia.
+
+-   `classroom-edges.csv` con la lista de aristas que incluye un atributo (los atributos
+    los conocen normalmente como variables o covariado y describen de alguna manera una
+    relación/enlace/arista o un sujeto/nodo/vértice). En este caso el atributo es
+    `liking`, de tipo numérico en escala de 1 al 5 indica cuánto a *ego* le agrada
+    *alter*, es decir, el emisor y receptor de la relación.
+
+-   `classroom-nodes.csv` con atributos nodales: `female`, una variable binaria
+    clasificada como lógica, `TRUE` si es niña, `FALSE` si es niño; `isei08_m` y
+    `isei08_f`, variables numéricas que indican el estatus socioeconómico respectivo del
+    padre y mqdre de *ego*.
+
+Hay otros datos que examinaremos en su momento, incluidos en la carpeta como
+`introToSNAinR.Rdata` y los datos de redes creadas por este servidor.
+
+```{r}
+relations <- read.csv("classroom-adjacency.csv",header=T,row.names=1,stringsAsFactors=FALSE)
+relations[1:10,1:10] #ver sección del subgrafo con notación de corchete para matrices
+```
+
+Igualaremos los nombres de columnas con filas en este caso (son los mismos sujetos tras
+revisar)
+
+```{r}
+colnames(relations) <- rownames(relations)
+```
+
+También importaremos una lista de aristas
+
+```{r}
+edgelist<-read.csv("classroom-edges.csv",header=T,stringsAsFactors = F)
+head(edgelist)
+```
+
+Si hiciéramos con `igraph` el grafo saldría así:
+
+```{r}
+relations <- as.matrix(relations) # convertimos a formato matriz (no es necesario estrictamente, pero se está tornando así)
+graph_from_adjacency_matrix(relations, mode="directed")
+```
+
+```{r}
+edgelist_matrix <- as.matrix(edgelist)
+head(edgelist_matrix)
+```
+
+Si tratáramos de importar la matriz anterior como un grafo, no funcionaría, pues la
+función `graph_from_edgelist` espera una matriz de dos columnas, no de tres. Por ello, se
+debe hacer una selección de las dos columnas que se desean importar, y luego se le puede
+añadir un atributo a las aristas.
+
+```{r}
+# 1. Crear el grafo a partir de las dos columnas
+g <- graph_from_edgelist(as.matrix(edgelist[, c("from", "to")]), 
+                         directed = TRUE)
+
+# 2. Agregar la columna 'liking' como atributo de las aristas
+E(g)$liking <- edgelist$liking
+g
+```
+
+```{r}
+classroom_kids <- read.csv("classroom-nodes.csv", header=TRUE, colClasses=c(name = "character"))
+head(classroom_kids)
+```
+```{r}
+classroom_play <- read.csv("classroom-edges.csv", header=TRUE, colClasses = c(from="character", to="character"))
+head(classroom_play)
+```
+```{r}
+classroom <- graph_from_data_frame(classroom_play, vertices=classroom_kids,
+                                   directed=TRUE)
+classroom
+```
+
+
+## Importando datos de ejemplo 2
+
+```{r}
+library(tidyverse)
+# Importar la lista de aristas de AR2007.xlsx
+nodes_2007 <- read.csv("Nodes_2007.csv", header = TRUE, stringsAsFactors = FALSE)
+edgelist_2007 <- read.csv("edgelist_2007.csv", header = TRUE, stringsAsFactors = FALSE)
+nodes_2007 <- distinct(nodes_2007, ID, .keep_all = TRUE)
+```
+
+Cargar dos archivos con datos de nodos y aristas, y crear un grafo con ellos.
+
+```{r}
+g_2007 <- graph_from_data_frame(d = edgelist_2007, 
+                                vertices = nodes_2007, 
+                                directed = TRUE)
+g_2007
+```
+
+```{r}
+library(ggraph)
+library(tidygraph)
+
+g_tbl <- as_tbl_graph(g_2007)
+
+ggraph(g_tbl, layout = "fr") + 
+  geom_edge_link(alpha = 0.5) + 
+  geom_node_point(aes(size = centrality_degree(mode = "out")), color="tomato") +
+  theme_void()
+```
+
+s## Conceptos estadísticos descriptivos en análisis de redes.
+
+Brevemente iré sobre algunas de las estadísticas descriptivas que se usan frecuentemente
+en análisis de redes. Estas son:
+
+-   **Grado**: el número de conexiones que tiene un nodo. En redes dirigidas, se puede
+    hablar de grado de entrada y de salida. En redes ponderadas, se puede hablar de grado
+    ponderado. Se define matemáticamente como $k_i = \sum_{j=1}^{n} a_{ij}$, donde
+    $a_{ij}$ es el elemento de la matriz de adyacencia que indica si hay una conexión
+    entre los nodos $i$ y $j$. En el caso de redes dirigidas, se puede hablar de grado de
+    entrada y de salida, y se define como $k_{i}^{in} = \sum_{j=1}^{n} a_{ji}$ y
+    $k_{i}^{out} = \sum_{j=1}^{n} a_{ij}$, respectivamente, y se le llama también fuerza o
+    grado ponderado.
+
+-   **Centralidad**: la centralidad de un nodo mide su importancia en la red. Hay varios
+    tipos de centralidad, como la centralidad de grado, la centralidad de cercanía, la
+    centralidad de intermediación, la centralidad de vector propio, entre otras.
+
+    -   La centralidad de grado (*degree*) es simplemente el grado del nodo. Esto es, un
+        nodo es más central si tiene más conexiones. Piensen en una red de amigos: si una
+        persona tiene muchos amigos, es más central en grado que una persona que tiene
+        pocos amigos.
+
+    -   La centralidad de cercanía (*closeness*) mide la distancia promedio de un nodo a
+        todos los demás nodos. Un nodo es más central si está más cerca de los demás
+        nodos. Siguiendo con el ejemplo de la red de amigos, una persona que está a una
+        distancia promedio de 2 de todos los demás nodos es más central en cercanía que
+        una persona que está a una distancia promedio de 5.
+
+    -   La centralidad de intermediación (*betweenness*) mide cuánto un nodo se encuentra
+        entre los demás nodos. Un nodo es más central si está en el camino más corto entre
+        otros nodos. En la red de amigos, una persona que está en el camino más corto
+        entre todos los demás nodos es más central en intermediación que una persona que
+        no está en el camino más corto entre los demás nodos. Es un puente entre los demás
+        nodos.
+
+    -   La centralidad de vector propio (*eigenvector*) mide la importancia de un nodo en
+        función de la importancia de sus vecinos. Un nodo es más central si sus vecinos
+        son más centrales. En la red de amigos, una persona es más central en vector
+        propio si sus amigos son más centrales que los amigos de otra persona.
+
+-   **Densidad**: la densidad de una red mide cuántas conexiones hay en la red en relación
+    con todas las posibles conexiones. Se define matemáticamente como
+    $D = \frac{2m}{n(n-1)}$, donde $m$ es el número de conexiones y $n$ es el número de
+    nodos. La densidad de una red varía entre 0 y 1, donde 0 indica que no hay conexiones
+    y 1 indica que todas las posibles conexiones están presentes.
+
+-   **Modularidad**: la modularidad de una red mide cuánto la red se divide en
+    comunidades. Una red es modular si se divide en comunidades bien definidas. La
+    modularidad se define matemáticamente como
+    $Q = \frac{1}{2m} \sum_{i,j} (a_{ij} - \frac{k_i k_j}{2m}) \delta(c_i, c_j)$, donde
+
+    -   $m$ es el número de conexiones,
+
+    -   $a_{ij}$ es el elemento de la matriz de adyacencia que indica si hay una conexión
+        entre los nodos $i$ y $j$,
+
+    -   $k_i$ y $k_j$ son los grados de los nodos $i$ y $j$, respectivamente,
+
+    -   y $\delta(c_i, c_j)$ es 1 si los nodos $i$ y $j$ están en la misma comunidad y 0
+        en caso contrario.
+
+    -   La modularidad varía entre -1 y 1, donde 1 indica que la red es completamente
+        modular y -1 indica que la red no es modular. En la práctica los valores negativos
+        indican una partición peor que una asignación aleatoria de comunidades y, en
+        muchos contextos, se observa que las modularidades positivas (entre 0 y 1) son las
+        que se interpretan como indicativas de una estructura comunitaria.
+
+-   **Coeficiente de clustering**: Mide la proporción de conexiones existentes entre los
+    vecinos de un nodo respecto al número total de conexiones posibles entre ellos. Se
+    define matemáticamente como $C_i = \frac{2t_i}{k_i(k_i - 1)}$, donde $t_i$ es el
+    número de triángulos en los que participa el nodo $i$ (es decir, el número de pares de
+    vecinos de $i$ que están conectados entre sí) y $k_i$ es el grado del nodo $i$ (número
+    de sus vecinos). Este coeficiente varía entre 0 y 1:
+
+    -   Un valor de 0 indica que ninguno de los vecinos está conectado con otro,
+
+    -   Un valor de 1 indica que todos los vecinos están completamente interconectados,
+        formando así un clúster cerrado.
+
+-   **Longitud del camino más corto**: la longitud del camino más corto entre dos nodos
+    refiere a la mínima cantidad de pasos (o aristas) que se deben recorrer para conectar
+    dos nodos en una red. Matemáticamente, se define como
+    $d_{ij} = \min_{p_{ij}} \sum_{(u,v) \in p_{ij}} 1$,donde $p_{ij}$ representa cada
+    camino posible entre los nodos $i$ y $j$ y la suma recorre todas las aristas $(u,v)$
+    del camino. Cada arista contribuye con un valor de $1$, por lo que la suma total es el
+    número de pasos necesarios para conectar $i$ y $j$. La longitud del camino más corto
+    varía entre 1 (cuando $i$ y $j$ están directamente conectados) e $\infty$ (cuando no
+    existe ningún camino que los conecte).
+
+-   **Transitividad**: la transitividad de una red mide cuántos triángulos hay en la red
+    en relación con todas las tripletes conectadas (es decir $\Delta/\Lambda$). Se define
+    matemáticamente como
+    $T = \frac{3 \times \text{número de triángulos}}{\text{número de tripletes conectados}}$.
+    La transitividad de una red varía entre 0 y 1, donde 0 indica que no hay triángulos y
+    1 indica que todos los posibles triángulos están presentes. También se le refiere como
+    coeficiente de clustering global o cierre triádico.
+
+## Midiendo conceptos estadísticos en R
+
+Estos conceptos anteriormente mencionados se pueden medir en R con las siguientes
+funciones:
+
+### Densidad
+
+```{r}
+#Densidad del grafo g_2007
+densidad<- igraph::edge_density(g_2007)
+densidad
+```
+
+Vemos una densidad de 0.0015, lo que indica que la red es muy poco densa. Recordemos que
+densidad puede ser en mínimo 0, es decir, de todos los nodos, ninguno está conectado, y en
+máximo 1, es decir, todos los nodos están conectados, y han alcanzado el máximo de
+conexiones posibles. Es improbable ver redes de densidad 1, pero sí muchas *cercanas* a
+densidad 0 absoluto.
+
+### Modularidad
+
+```{r}
+#Modularidad del grafo g_2007
+comunidades <- cluster_infomap(g_2007)
+modularidad <- igraph::modularity(g_2007, comunidades$membership)
+modularidad
+```
+
+La modularidad del grafo es de 0.36, lo que indica que la red tiene una estructura de
+comunidades.
+
+### Grado ponderado
+
+```{r}
+#Grado ponderado del grafo g_2007
+grado_ponderado <- igraph::strength(g_2007, mode = "out", loops = FALSE)
+grado_ponderado
+summary(grado_ponderado)
+```
+
+Vemos las salidas tanto de grados de cada nodo como un resumen de los grados ponderados.
+El promedio es de 2.3, lo que indica que la red tiene nodos con grados muy bajos (0) y
+otros con grados muy altos (78). Si un nodo tiene unos dos grados, esto significa que
+tiene dos conexiones con otros nodos.
+
+### Centralidades
+
+#### Centralidad de grado
+
+```{r}
+centralidad_grado <- degree(g)
+centralidad_grado
+```
+
+#### Centralidad de cercanía
+
+```{r}
+centralidad_cercania <- closeness(g)
+summary(centralidad_cercania)
+```
+
+#### Centralidad de intermediación
+
+```{r}
+centralidad_intermediacion <- betweenness(g)
+summary(centralidad_intermediacion)
+```
+
+#### Centralidad de vector propio
+
+```{r}
+centralidad_vector_propio <- eigen_centrality(g)$vector
+summary(centralidad_vector_propio)
+```
+
+En promedio la centralidad de vector propio es de aproximadamente 0.01. Esto indica que en
+general, la mayoría de los nodos no están especialmente «empoderados» a través de sus
+conexiones. Es decir, no existe un grupo muy destacado de nodos con vecinos altamente
+centrales (o, si existe, su efecto queda muy diluido en el conjunto de la red). En redes
+grandes, un valor promedio bajo de centralidad de vector propio indica que la influencia
+relativa de los nodos (considerando la importancia de sus vecinos) se distribuye de forma
+bastante homogénea o con pocos picos de gran relevancia.
+
+### Coeficiente de clustering
+
+```{r}
+#Coeficiente de clustering del grafo g_2007
+coef_clustering_local <- transitivity(g, type = "local")
+coef_clustering_global <- transitivity(g, type = "global")
+summary(coef_clustering_local) 
+coef_clustering_global
+```
+
+El coeficiente de clustering local se calcula para cada nodo $i$ como la fracción de
+conexiones que existen entre sus vecinos, en relación con las conexiones posibles.
+Mientras que el coeficiente de clustering global se basa en la proporción de tripletes
+cerrados (triángulos) en toda la red con respecto al total de tripletes conectados, no en
+el promedio del mismo (como hice en el caso local). Las diferencias pueden ser sutiles,
+pero importantes, pues en estos casos podrían indicarme que hay una distribución desigual
+de conexiones en la red: unos vecinos muy bien conectados, otros no tanto. O puede haber
+muchos nodos con bajo clustering local que, sin embargo, al sumarse, arrojan un valor
+global diferente al promedio de los locales.
+
+Estas estadísticas descriptivas nos dan una idea de cómo está estructurada la red, de los
+tipos de conexiones que hay en ella a nivel global. También podemos usarla para
+identificar estadísticas relacionadas al nodo a nivel individual. Dependiendo el nivel de
+análisis que estemos llevando a cabo, convendrá usar una u otra, o ambas.
+
+Por ejemplo, en mi caso usé estas y otras estadísticas agregadas del grafo para luego
+hacer análisis comparado macroeconómico combinado a otras estadísticas más estándares en
+socioeconomía y política y evaluar así cómo la estructura de redes en agregado se
+relacionaba con conceptos de capitalismo comparado. Por otro lado, si lo que quisiéramos
+es entender qué actor es crucial para conectar pedazos de la red, garantizar el flujo de
+información, o entender cómo se distribuye la influencia en una red, las estadísticas a
+nivel del nodo nos pueden ayudar a entenderlo.
+
+## ERGMs
+
+Los Modelos Exponenciales de Grafos Aleatorios (ERGM) permiten modelar la probabilidad de que se forme una red observada en función de las características de los nodos, las aristas y las estructuras de red. Se usan para analizar redes sociales, económicas y políticas, proporcionando una forma estadística de inferir mecanismos estructurales de formación de redes.
+
+```{r}
+library(igraph)
+library(tidygraph)
+library(network)
+library(ergm)
+library(intergraph)
+net_2007 <- asNetwork(g_2007)  # Convierte el grafo de igraph a network
+summary(net_2007)  # Muestra información sobre la red
+```
+Y podemos ajustar un modelo ERGM a la red `net_2007` de dos formas
+
+```{r}
+# Convertir la red en no dirigida
+g_2007_undirected <- as.undirected(g_2007, mode = "collapse")
+
+# Convertir a network
+library(intergraph)
+net_2007_undirected <- asNetwork(g_2007_undirected)
+
+# Ajustar el modelo ERGM
+fit_ergm <- ergm(net_2007_undirected ~ edges + triangles)
+summary(fit_ergm)
+```
+
+```{r}
+#fit_ergm <- ergm(net_2007 ~ edges + triangles + gwesp(0.5)+gwdsp(0.5) + nodefactor("CondensedSector")+nodecov("Revenue))
+#summary(fit_ergm)
+```
+
+# Importando datos de ejemplo 3
+
+Moviéndonos a la visualización, cargaré unos datos que estoy editando para un artículo a
+publicar más tarde en la primavera de 2025. Estos datos son de una red de colaboración
+científica en la que estoy trabajando. Les muestro en el salón la versión original en
+Excel, y ahora el cargado:
+
+```{r Cargando élites ecuatorianas}
+load("grafo_sin_aislados.RData")
+library(tidygraph)
+library(tidyverse)
+library(scales)
+```
+
+El paquete `tidygraph` utiliza `igraph` internamente para almacenar datos de redes, pero proporciona una interfaz “ordenada” para la manipulación de datos. Los datos de la red se gestionan como dos marcos de datos interconectados: (1) nodos y (2) aristas. Esto es muy similar a la estructura de datos aceptada por la función `igraph::graph_from_data_frame()`, como se demostró anteriormente.
+
+A modo de ejemplo con el caso de los datos de niños en salones de clase:
+
+```{r}
+tg_classroom <- tbl_graph(nodes = classroom_kids, edges = classroom_play, 
+                          directed = TRUE)
+tg_classroom
+```
+y `as_tbl_graph()` convierte un grafo de `igraph` en un objeto de `tidygraph`.
+
+```{r}
+tg_classroom2 <- as_tbl_graph(classroom)
+tg_classroom2
+```
+Con ello se puede trabajar los atributos de una manera más intuitiva o al menos basada en un lenguaje al que ya estamos familiarizados:
+```{r}
+tg_classroom %>%
+  activate(nodes) %>%
+  mutate(
+    status = pmin(isei08_m, isei08_f, na.rm=TRUE)
+  )
+```
+Volviendo al caso de ejemplo de las élites ecuatorianas, se puede hacer lo siguiente:
+
+## Representación visual de redes
+
+```{r Convirtiendo documento adecuado}
+# Convertir el grafo de igraph a tidygraph para usar ggraph
+grafo_tidy <- as_tbl_graph(grafo_sin_aislados) |> 
+  activate(nodes) |> 
+  mutate(
+    familia_core = if_else(familia_core == "no", "non-original-caste", familia_core),
+    color = case_when(
+      familia_core == "Firm" ~ "gold",                  
+      familia_core == "Fortunas" ~ "red",             
+      familia_core == "Guayaquil" ~ "cyan",  
+      TRUE ~ "blue"                                
+    ),
+    sizevar = case_when(
+      familia_core == "Firm" ~ 2,  
+      familia_core == "Fortunas" ~ 5, 
+      familia_core == "Guayaquil" ~ 4,
+      TRUE ~ 1
+    ),
+    size_degree = rescale(centrality_degree(), to = c(3, 10)), 
+    size_combined = sizevar + size_degree  
+  ) |> 
+  activate(edges) |> 
+  mutate(
+    periodocat = factor(
+      periodocat,
+      levels = c("colonial", "república_temprana", "república_media", "república_velasquista")
+    )
+  )
+```
+
+En la parte anterior se hizo una serie de modificaciones al grafo original para fines de
+crear la estética deseada. Se le añadió un color y tamaño a los nodos, y se le añadió un
+tamaño adicional a los nodos en función de su grado. Se le añadió un factor a los periodos
+históricos para que se ordenaran de manera correcta en la visualización, es decir, ya que
+no intuiría adecuadamente las categorías, les di un orden de eras o periodos históricos.
+
+Podemos pasar a ejecutar la visualización con `ggplot2` y `ggraph`.
+
+-   `geom_edge_link()` dibuja las aristas con colores y estilos según `tietype` y
+    `periodocat`.
+
+-   `geom_node_point()` asigna colores y tamaños a los nodos.
+
+-   Se usa `scale_color_manual()` para definir los colores de las categorías.
+
+-   Se aplica `theme_graph()` para mejorar la estética y se añade un título.
+
+```{r}
+# Visualizar el grafo con ggraph
+ggraph(grafo_tidy, layout = "fr") +
+  geom_edge_link(
+    aes(color = as.factor(tietype), linetype = periodocat),
+    alpha = 0.8,
+    width = 0.8
+  ) +
+  geom_node_point(aes(color = color, size = size_combined)) + 
+  scale_color_manual(
+    values = c("red" = "red", "blue" = "blue", "gold" = "gold", "cyan" = "cyan"),
+    name = "Hierarchical status",
+    labels = c("Fortunas", "Guayaquil", "Entidades", "Casta")
+  ) +
+  theme_graph() +
+  ggtitle("Múltiples redes de élite ecuatoriana") +
+  theme(
+    legend.position = "bottom",
+    plot.title = element_text(hjust = 0.5)
+  )
+```
+
+# Qué aprendimos en este taller
+
+Aprendimos la existencia de varios acercamientos de R para trabajar con redes, desde lo descriptivo, inferencial y de visualizaciones. Con esto concluimos esta serie de talleres sobre R, y espero que les haya sido de utilidad. Si tienen alguna pregunta, no duden en contactarme a mi correo electrónico. ¡Gracias por su atención!
