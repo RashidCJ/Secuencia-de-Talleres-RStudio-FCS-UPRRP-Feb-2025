@@ -1,5 +1,5 @@
 ---
-title: 'CACCS: Secuencia de taller de RStudio -- Parte 3'
+title: 'CACCS: Secuencia de taller de RStudio -- Parte 4'
 author: "Rashid C.J. Marcano Rivera"
 date: "27 de feb.º de 2025"
 output:
@@ -18,9 +18,10 @@ editor_options:
 Este taller está basado en elementos y ejemplos de la presentación *Introduction to
 `statnet` (and `igraph`) for Social Network Analysis* de Patrick Kaminski (Doctorando de
 Sociología y Computación IU-Bloomington) y Ann McCrannie (Instituto de Ciencias de Redes
-de IU), las viñetas de `igraph` y `statnet`, así como datos de mi disertación doctoral
-para análisis descriptivo adicional así como inferencial, y de un artículo que estoy en
-proceso de concluir para visualización.
+de IU), las [viñeta de `igraph`](https://r.igraph.org/articles/igraph_ES.html) y [la
+viñeta de `statnet`](https://statnet.org/workshop-intro-sna-tools/), así como datos de mi
+disertación doctoral para análisis descriptivo e inferencial, y datos de un artículo que
+estoy en proceso de concluir, para visualización.
 
 Las metas de este último taller de la secuencia de talleres son:
 
@@ -73,12 +74,14 @@ de vértices, tales como $\{x,y\}\in E$, y entonces se dice que $x$ e $y$ son ad
 La arista no dirigida se representa en un grafo mediante un segmento de recta que une a
 dichos vértices y si fuere dirigida se le llama dígrafo denotado $D=(V,E)$ con flecha de
 $x$ a $y$. Ahí el par $(x,y)$ es un par ordenado y la arista dirigida se denota como
-$(x,y)\in E$.
+$(x,y)\in E$. Para entrar a mayor profundidad en la notación y conceptos de teoría de
+grafos y sus algoritmos recomiendo el capítulo enlazado aquí en
+[arXiv](https://arxiv.org/abs/cond-mat/0602129).
 
 El grafo social o sociograma es entonces una representación de una red social sustentada
 en la teoría de grafos. Hay varios tipos (simple, múltiple, hipergrafos, etc.) Las aristas
 pueden ser adyacentes si convergieren en el mismo vértice, paralelas si los vértices
-inciales y finales fueren el mismo o cíclicas si parten del vértice para ir al mismo
+iniciales y finales fueren el mismo o cíclicas si parten del vértice para ir al mismo
 punto. Finalmente, se le llama camino al conjunto de vértices que están interconectados
 por aristas.
 
@@ -98,10 +101,10 @@ library(igraph)
 make_graph( c(1,2, 2,3, 3,4), directed=FALSE)
 ```
 
-Esto nos indica que creó un grafo no dirigido (`--` es no dirigido, `--+` es dirigido). En
-adición, se puede indicar una red con instrucciones como el `:`, refiriendo un nodo a un
-conjunto de nodos: `Ross -- Chandler:Joey:Rachel:Phoebe:Monica` debiera crear el conector
-de todos estos amigos.
+Esto nos indica que creó un grafo no dirigido (`--` es no dirigido, `--+` o `+--` es
+dirigido). En adición, se puede indicar una red con instrucciones como el `:`, refiriendo
+un nodo a un conjunto de nodos: `Ross -- Chandler:Joey:Rachel:Phoebe:Monica` debiera crear
+el conector de todos estos amigos.
 
 ```{r}
 g <- make_graph(~ 1 - 2, 2 - 3)
@@ -147,6 +150,13 @@ que hay en el objeto:
 
     -   Finalmente en `+edges:` se indica la lista de aristas, quizás cortándose si se
         extendiera mucho en grafos grandes.
+
+R permite la visualización básica de estas redes, como podremos ver, siguiendo la misma
+lógica inicial de programación en R básico:
+
+```{r}
+plot(g3,main="Grafo de los amigos centrales en la serie «Friends»")
+```
 
 Otras funciones de `igraph` para importar o crear grafos, o viceversa, llevar un grafo a
 un objeto de tipo normal para `R` son usados dependiendo la estructura o arquitectura de
@@ -196,7 +206,8 @@ revisar)
 colnames(relations) <- rownames(relations)
 ```
 
-También importaremos una lista de aristas
+También importaremos una lista de aristas, que vemos cuenta también con una columna de
+atributos de aristas.
 
 ```{r}
 edgelist<-read.csv("classroom-edges.csv",header=T,stringsAsFactors = F)
@@ -234,16 +245,17 @@ g
 classroom_kids <- read.csv("classroom-nodes.csv", header=TRUE, colClasses=c(name = "character"))
 head(classroom_kids)
 ```
+
 ```{r}
 classroom_play <- read.csv("classroom-edges.csv", header=TRUE, colClasses = c(from="character", to="character"))
 head(classroom_play)
 ```
+
 ```{r}
 classroom <- graph_from_data_frame(classroom_play, vertices=classroom_kids,
                                    directed=TRUE)
 classroom
 ```
-
 
 ## Importando datos de ejemplo 2
 
@@ -257,12 +269,30 @@ nodes_2007 <- distinct(nodes_2007, ID, .keep_all = TRUE)
 
 Cargar dos archivos con datos de nodos y aristas, y crear un grafo con ellos.
 
+Para tener una idea de cómo se ven estos datos, podríamos ver las primeras o últimas seis
+filas de los mismos:
+
+```{r}
+head(nodes_2007)
+head(edgelist_2007)
+```
+
 ```{r}
 g_2007 <- graph_from_data_frame(d = edgelist_2007, 
                                 vertices = nodes_2007, 
                                 directed = TRUE)
 g_2007
 ```
+
+En este caso he tomado un grafo que incluye una serie de atributos como nombre de
+accionista o entidad, ingresos, año identificado (en este caso todos son 2007), país de
+persona o entidad (este listado de entidades cubre a México, Argentina, Brasil y Chile),
+el sector económico al que pertenecen las entidades (bancos, sector financiero general,
+sector no financiero, individuos o familias, sector público, etc.). Finalmente, como
+atributo de arista está la acción sostenida por un actor en otro de 0 al 100 como
+`Weight`.
+
+Podríamos visualizar este grafo:
 
 ```{r}
 library(ggraph)
@@ -276,10 +306,35 @@ ggraph(g_tbl, layout = "fr") +
   theme_void()
 ```
 
-s## Conceptos estadísticos descriptivos en análisis de redes.
+Entraremos en visualizaciones algo más en detalle, pero notamos que podemos usar ahora la
+gramática de gráficos para los grafos. En este caso quizá querramos no venros ahogados en
+el mar de rojo tomate no informativo de arriba, y querramos diferenciar los nodos por
+alguna de las variables, como el país o sector económico al que pertenecen los mismos:
+
+```{r}
+ggraph(g_tbl, layout = "fr") + 
+  geom_edge_link(alpha = 0.5) + 
+  geom_node_point(aes(size = centrality_degree(mode = "out"), color = Country)) +
+  theme_void()
+```
+
+## Conceptos estadísticos descriptivos en análisis de redes.
 
 Brevemente iré sobre algunas de las estadísticas descriptivas que se usan frecuentemente
-en análisis de redes. Estas son:
+en análisis de redes. Si tienen tiempo recomiendo examinar fuentes (esta lista no es
+exhaustiva) como:
+
+-   [A First Course in Network
+    Science](https://cambridgeuniversitypress.github.io/FirstCourseNetworkScience/)
+
+-   [Networks (Second
+    Edition)](https://global.oup.com/academic/product/networks-9780198805090?cc=us&lang=en&),
+    y
+
+-   [Networks, Crowds, and Markets: Reasoning About a Highly Connected
+    World](https://www.cs.cornell.edu/home/kleinber/networks-book/).
+
+Volviendo a las descriptivas básicas, estas son:
 
 -   **Grado**: el número de conexiones que tiene un nodo. En redes dirigidas, se puede
     hablar de grado de entrada y de salida. En redes ponderadas, se puede hablar de grado
@@ -403,7 +458,7 @@ modularidad
 ```
 
 La modularidad del grafo es de 0.36, lo que indica que la red tiene una estructura de
-comunidades.
+comunidades. En la sección de visualización veremos cómo se ven las mismas.
 
 ### Grado ponderado
 
@@ -492,7 +547,11 @@ nivel del nodo nos pueden ayudar a entenderlo.
 
 ## ERGMs
 
-Los Modelos Exponenciales de Grafos Aleatorios (ERGM) permiten modelar la probabilidad de que se forme una red observada en función de las características de los nodos, las aristas y las estructuras de red. Se usan para analizar redes sociales, económicas y políticas, proporcionando una forma estadística de inferir mecanismos estructurales de formación de redes.
+Los Modelos Exponenciales de Grafos Aleatorios (ERGM) permiten modelar la probabilidad de
+que se forme una red observada en función de las características de los nodos, las aristas
+y las estructuras de red. Se usan para analizar redes sociales, económicas y políticas,
+proporcionando una forma estadística de inferir mecanismos estructurales de formación de
+redes.
 
 ```{r}
 library(igraph)
@@ -501,16 +560,18 @@ library(network)
 library(ergm)
 library(intergraph)
 net_2007 <- asNetwork(g_2007)  # Convierte el grafo de igraph a network
-summary(net_2007)  # Muestra información sobre la red
+summary(net_2007, print.adj = FALSE)  # Muestra información sobre la red, quité la opción de mostrar la lista entera de adyacencia ya que era absurdamente larga.
 ```
+
 Y podemos ajustar un modelo ERGM a la red `net_2007` de dos formas
 
 ```{r}
 # Convertir la red en no dirigida
-g_2007_undirected <- as.undirected(g_2007, mode = "collapse")
+g_2007_undirected <- as_undirected(g_2007, mode = "collapse")
 
 # Convertir a network
 library(intergraph)
+library(Rglpk)
 net_2007_undirected <- asNetwork(g_2007_undirected)
 
 # Ajustar el modelo ERGM
@@ -518,17 +579,104 @@ fit_ergm <- ergm(net_2007_undirected ~ edges + triangles)
 summary(fit_ergm)
 ```
 
+Las díadas responsables de las interacciones de los nodos se registrearon y se evaluó la
+matriz de predictores y respuestas. Se realizó una primera estimación por máxima
+pseudoverosimilitud (MPLE) y luego se pasó la máxima verosimilitud por iteraciones de
+Monte Carlo (MCMC) para obtener estimaciones de los parámetros y sus intervalos de
+confianza. Observamos varios ciclos iterativos hasta que modelo convergiera en bondad de
+ajuste. Se utilizó un modelo de puentes para refinar la estimación final de verosimilitud
+y finalizó la estimación, almacenando los datos en un objeto `fit_ergm`. Este se ve a
+través de la función de resumen, `summary(fit_ergm)`, que nos da una idea de cómo se
+ajustó el modelo a los datos.
+
+Los parámetros del modelo ERGM se pueden interpretar como los efectos de las variables en
+la red que vemos conformada. El parámetro base de las aristas (edges) es negativo, pero la
+presencia de triángulos aumenta la probabilidad de ver otras aristas. El mensaje final
+recomienda usar `mcmc.diagnostics()` para evaluar la calidad de la cadena de Markov y
+descartar problemas de degeneración o falta de convergencia.
+
+Este modelo fue sencillo en variables explicativas, pero se pueden añadir más variables.
+En este caso, lo haré pero con una instrucción adicional para, por cuestiones de tiempo,
+se quede en la pseudo-verosimilitud máxima.
+
 ```{r}
-#fit_ergm <- ergm(net_2007 ~ edges + triangles + gwesp(0.5)+gwdsp(0.5) + nodefactor("CondensedSector")+nodecov("Revenue))
-#summary(fit_ergm)
+fit_ergm <- ergm(net_2007 ~ edges + triangles + gwesp(0.5)+gwdsp(0.5) + nodefactor("CondensedSector")+nodecov("Revenue"),
+				 estimate = "MPLE")
+summary(fit_ergm)
 ```
+
+El coeficiente de edges es la base, y aquí es como hablar del intercepto. En ausencia de
+otros efectos, la tendencia base es que no se formen conexiones, o que hay un costo base
+para formar vínculos. El coeficiente de triángulos ahora es casi cero y no significativo,
+lo que indica que la presencia de triángulos no afecta la probabilidad de formar otras
+aristas. GWESP se traduce como “compartidos ponderados generalizados por arista” y GWDSP
+como «compartidos ponderados generalizados por díada». Estos términos se añaden a los
+modelos ERGM con frecuencia para ayudar a estabilizarlos y evitar problemas de
+degeneración, ya que capturan estructuras de conectividad más complejas en la red que los
+términos básicos (como triángulos o aristas), aportando información adicional sobre cómo
+los nodos comparten vecinos o díadas. Esto permite que el modelo ajuste de manera más
+precisa las dependencias locales en la red. Si bien GWESP resultó no ser significativo,
+GWDSP lo es (aunque la función de decaída no lo es). Indica que cuando existen díadas con
+vecinos compartidos, esta estructura tiende a reducir la probabilidad de formar nuevas
+conexiones. Es como decir que, tras cierto nivel de “redundancia” en la red, se vuelve
+menos probable que se generen nuevos vínculos. Los coeficientes asociados a las distintas
+categorías del sector (por ejemplo, `Bank`, `Financial sector`, `Individuals/Families`,
+`Nonfinancial sector`, `Public or Government`) son todos negativos y muy significativos,
+lo que indica que, comparados con la categoría de referencia, estos sectores tienen una
+menor propensión a formar conexiones en este sistema económico. En términos de un modelo
+econométrico, es como si ciertos grupos o sectores presentaran barreras o costos
+adicionales para generar interacciones. La categoría `Selfowned` no muestra un efecto
+significativo. Finalmente, el coeficiente de `Revenue` es positivo y significativo, lo que
+indica que, a mayor ingreso, la probabilidad de formar conexiones es mayor. En términos
+económicos, esto podría interpretarse como que las entidades con mayores ingresos tienen
+una mayor capacidad para establecer relaciones con otros actores en la red.
+
+Si hiciéramos el análisis con la red de estudiantes de más temprano, podríamos rápidamente
+ahora ver:
+
+```{r}
+# Dropear los naas de classroom
+# Identificar los nodos que no tienen NA en "isei08_m"
+nodos_validos <- which(!is.na(V(classroom)$isei08_m))
+
+# Crear un subgrafo que contenga solo esos nodos
+classroom_clean <- induced_subgraph(classroom, vids = nodos_validos)
+# Elimina esos nodos de la red
+classroom_net <- asNetwork(classroom_clean)
+
+# Resumir la red sin imprimir toda la lista de aristas
+summary(classroom_net, print.adj = FALSE)
+```
+
+```{r}
+fit_ergm_classroom <- ergm(classroom_net ~ edges + triangles + gwesp()+gwdsp()+
+                             nodefactor("female") + nodecov("isei08_m"),
+						   estimate = "MPLE")
+
+# Mostrar el resumen del modelo
+summary(fit_ergm_classroom)
+```
+
+El coeficiente de aristas no es significativo, lo que indica que la tendencia base a
+formar vínculos no difiere significativamente de cero. El de triángulos sí es positivo y
+significativo, que indica una fuerte tendencia al cierre triádico. Los términos de GWESP y
+su decaída son positivos. Esto muestra una tendencia marginal a que los vecinos
+compartidos en una conexión influyan en la formación de vínculos, aunque su significancia
+es apenas marginal $(p ≈ 0.097)$. GWDSP es negativo y significativo, una mayor cantidad de
+díadas con vecinos compartidos reduce la probabilidad de formar nuevos vínculos. El efecto
+del género no es significativo, lo que indica que no hay diferencias relevantes en la
+formación de vínculos según el género. El coeficiente negativo y significativo de la
+covariable `isei08_m` sugiere que, a mayor estatus socioeconómico (o capital social) del
+padre, menor es la probabilidad de que el niño establezca vínculos. En términos
+económicos, esto podría interpretarse como que los niños de familias con mayor capital
+social tienen menos necesidad de establecer o reportar relaciones en la red.
 
 # Importando datos de ejemplo 3
 
 Moviéndonos a la visualización, cargaré unos datos que estoy editando para un artículo a
-publicar más tarde en la primavera de 2025. Estos datos son de una red de colaboración
-científica en la que estoy trabajando. Les muestro en el salón la versión original en
-Excel, y ahora el cargado:
+publicar más tarde en la primavera de 2025. Estos datos son de una red de élites
+económicas ecuatorianas. Les muestro en el salón la versión original en Excel, y ahora el
+cargado:
 
 ```{r Cargando élites ecuatorianas}
 load("grafo_sin_aislados.RData")
@@ -537,7 +685,11 @@ library(tidyverse)
 library(scales)
 ```
 
-El paquete `tidygraph` utiliza `igraph` internamente para almacenar datos de redes, pero proporciona una interfaz “ordenada” para la manipulación de datos. Los datos de la red se gestionan como dos marcos de datos interconectados: (1) nodos y (2) aristas. Esto es muy similar a la estructura de datos aceptada por la función `igraph::graph_from_data_frame()`, como se demostró anteriormente.
+El paquete `tidygraph` utiliza `igraph` internamente para almacenar datos de redes, pero
+proporciona una interfaz “ordenada” para la manipulación de datos. Los datos de la red se
+gestionan como dos marcos de datos interconectados: (1) nodos y (2) aristas. Esto es muy
+similar a la estructura de datos aceptada por la función
+`igraph::graph_from_data_frame()`, como se demostró anteriormente.
 
 A modo de ejemplo con el caso de los datos de niños en salones de clase:
 
@@ -546,23 +698,60 @@ tg_classroom <- tbl_graph(nodes = classroom_kids, edges = classroom_play,
                           directed = TRUE)
 tg_classroom
 ```
+
 y `as_tbl_graph()` convierte un grafo de `igraph` en un objeto de `tidygraph`.
 
 ```{r}
 tg_classroom2 <- as_tbl_graph(classroom)
 tg_classroom2
 ```
-Con ello se puede trabajar los atributos de una manera más intuitiva o al menos basada en un lenguaje al que ya estamos familiarizados:
+
+Con ello se puede trabajar los atributos de una manera más intuitiva o al menos basada en
+un lenguaje al que ya estamos familiarizados:
+
 ```{r}
-tg_classroom %>%
-  activate(nodes) %>%
+tg_classroom |>
+  activate(nodes) |>
   mutate(
     status = pmin(isei08_m, isei08_f, na.rm=TRUE)
   )
 ```
-Volviendo al caso de ejemplo de las élites ecuatorianas, se puede hacer lo siguiente:
 
 ## Representación visual de redes
+
+Podríamos visualizar entonces este ejemplo
+
+```{r}
+tg_classroom_mod <- tg_classroom |>
+  activate(nodes) |>
+  mutate(status = pmin(isei08_m, isei08_f, na.rm = TRUE))
+
+ggraph(tg_classroom_mod, layout = "kk") + # Algoritmo de Kamada-Kawai
+  geom_edge_link(alpha = 0.5) +
+  geom_node_point(aes(color = status), size = 3) +
+  scale_color_viridis_c() +
+  theme_void()
+```
+
+Usando los datos cargados para el ejemplo dos, digamos que queremos visualizar las
+comunidades que identificamos al hacer los análisis en modularidad previos.
+
+```{r}
+# Ya tenemos 'comunidades' sacado con cluster_infomap:
+# Añadimos la membresía como atributo a cada nodo
+g_tbl <- as_tbl_graph(g_2007) %>%
+  mutate(comunidad = factor(comunidades$membership))
+
+# Visualizamos el grafo, coloreando los nodos según la comunidad
+ggraph(g_tbl, layout = "graphopt") + # Similar a Fruchterman-Reingold
+  geom_edge_link(alpha = 0.5) + 
+  geom_node_point(aes(color = comunidad, size = centrality_degree(mode = "out"))) +
+  theme_void() +
+  theme(legend.position = "none") # apagué en este caso la leyenda ya que habían cientos de pequeñas comunidades identificadas.
+```
+
+Volviendo al caso de ejemplo de las élites ecuatorianas, se puede hacer lo siguiente,
+sabiendo que están distribuidas a través de regiones y épocas varias.
 
 ```{r Convirtiendo documento adecuado}
 # Convertir el grafo de igraph a tidygraph para usar ggraph
@@ -587,9 +776,14 @@ grafo_tidy <- as_tbl_graph(grafo_sin_aislados) |>
   ) |> 
   activate(edges) |> 
   mutate(
+  	#cambiar el nombre de república velasquista a república tardía
+  	periodocat = case_when(
+      periodocat == "república_velasquista" ~ "república_tardía",
+      TRUE ~ periodocat
+    ),
     periodocat = factor(
       periodocat,
-      levels = c("colonial", "república_temprana", "república_media", "república_velasquista")
+      levels = c("colonial", "república_temprana", "república_media", "república_tardía")
     )
   )
 ```
@@ -613,10 +807,10 @@ Podemos pasar a ejecutar la visualización con `ggplot2` y `ggraph`.
 
 ```{r}
 # Visualizar el grafo con ggraph
-ggraph(grafo_tidy, layout = "fr") +
+ggraph(grafo_tidy, layout = "graphopt") +
   geom_edge_link(
     aes(color = as.factor(tietype), linetype = periodocat),
-    alpha = 0.8,
+    alpha = 0.9,
     width = 0.8
   ) +
   geom_node_point(aes(color = color, size = size_combined)) + 
@@ -633,6 +827,19 @@ ggraph(grafo_tidy, layout = "fr") +
   )
 ```
 
+Podemos ver entonces las relaciones representadas en la gran complejidad de la red de
+élites a través del tiempo con esta visualización. Las fortunas o élites originarias, las
+familias de Guayaquil, las entidades y las castas se ven en colores distintos, y las
+relaciones entre ellas se ven en los vínculos, coloreados por la subred y con rayas de
+distinto tipo para marcar la era en la que se da el vínculo. Los nodos más grandes son los
+que tienen más conexiones. Este grafo es realmente la combinación de cuatro grafos de eras
+distintas, y se ve la complejidad de las relaciones entre las élites a lo largo del
+tiempo. (Recomiendo vean la imagen en el correo para ver con mayor resolución la red).
+
 # Qué aprendimos en este taller
 
-Aprendimos la existencia de varios acercamientos de R para trabajar con redes, desde lo descriptivo, inferencial y de visualizaciones. Con esto concluimos esta serie de talleres sobre R, y espero que les haya sido de utilidad. Si tienen alguna pregunta, no duden en contactarme a mi correo electrónico. ¡Gracias por su atención!
+Aprendimos la existencia de varios acercamientos de R para trabajar con redes, desde lo
+descriptivo, inferencial y de visualizaciones. Con esto concluimos esta serie de talleres
+sobre R, y espero que les haya sido de utilidad. Si tienen alguna pregunta, no duden en
+contactarme a mi [correo electrónico](mailto:rashid.marcano@upr.edu). ¡Gracias por su
+atención!
